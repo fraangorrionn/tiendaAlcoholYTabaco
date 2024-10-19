@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Reclamos</title>
+</head>
+<body>
+    <h1>Lista de Reclamos</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Usuario</th>
+                <th>Descripción</th>
+                <th>Fecha</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for reclamo in reclamos %}
+            <tr>
+                <td>{{ reclamo.usuario.nombre }}</td>
+                <td>{{ reclamo.descripcion }}</td>
+                <td>{{ reclamo.fecha }}</td>
+                <td>{{ reclamo.estado }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{% url 'index' %}">Volver a la página de inicio</a>
+</body>
+</html>

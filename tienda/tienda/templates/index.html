@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Página de Inicio</title>
+</head>
+<body>
+    <h1>Bienvenido a la Tienda</h1>
+    <nav>
+        <ul>
+            <li><a href="{% url 'lista_usuario' %}">Lista de Usuarios</a></li>
+            <li><a href="{% url 'lista_producto' %}">Lista de Productos</a></li>
+            <li><a href="{% url 'lista_orden' %}">Lista de Órdenes</a></li>
+            <li><a href="{% url 'lista_detalle_orden' %}">Lista de Detalles de Orden</a></li>
+            <li><a href="{% url 'lista_provedor' %}">Lista de Proveedores</a></li>
+            <li><a href="{% url 'lista_inventario' %}">Lista de Inventarios</a></li>
+            <li><a href="{% url 'lista_tarjeta' %}">Lista de Tarjetas</a></li>
+            <li><a href="{% url 'lista_favoritos' %}">Lista de Favoritos</a></li>
+            <li><a href="{% url 'lista_reclamo' %}">Lista de Reclamos</a></li>
+            <li><a href="{% url 'lista_categoria' %}">Lista de Categorías</a></li>
+            <li><a href="{% url 'lista_producto_categoria' %}">Lista de Productos por Categoría</a></li>
+        </ul>
+    </nav>
+</body>
+</html>

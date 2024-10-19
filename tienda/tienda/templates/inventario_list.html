@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Inventarios</title>
+</head>
+<body>
+    <h1>Lista de Inventarios</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Cantidad Disponible</th>
+                <th>Ubicación</th>
+                <th>Mínimo Requerido</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for inventario in inventarios %}
+            <tr>
+                <td>{{ inventario.producto.nombre }}</td>
+                <td>{{ inventario.cantidad_disponible }}</td>
+                <td>{{ inventario.ubicacion }}</td>
+                <td>{{ inventario.minimo_requerido }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{% url 'index' %}">Volver a la página de inicio</a>
+</body>
+</html>

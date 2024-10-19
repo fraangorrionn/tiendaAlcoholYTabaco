@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Órdenes</title>
+</head>
+<body>
+    <h1>Lista de Órdenes</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Fecha de Orden</th>
+                <th>Total</th>
+                <th>Estado</th>
+                <th>Usuario</th>
+                <th>Método de Pago</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for orden in ordenes %}
+            <tr>
+                <td>{{ orden.fecha_orden }}</td>
+                <td>{{ orden.total }}</td>
+                <td>{{ orden.estado }}</td>
+                <td>{{ orden.usuario.nombre }}</td>
+                <td>{{ orden.metodo_pago }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{% url 'index' %}">Volver a la página de inicio</a>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Tarjetas</title>
+</head>
+<body>
+    <h1>Lista de Tarjetas</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Usuario</th>
+                <th>Número de Tarjeta</th>
+                <th>Fecha de Expiración</th>
+                <th>Tipo</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for tarjeta in tarjetas %}
+            <tr>
+                <td>{{ tarjeta.usuario.nombre }}</td>
+                <td>{{ tarjeta.numero_tarjeta }}</td>
+                <td>{{ tarjeta.fecha_expiracion }}</td>
+                <td>{{ tarjeta.tipo }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{% url 'index' %}">Volver a la página de inicio</a>
+</body>
+</html>

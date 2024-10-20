@@ -2,10 +2,63 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Página de Inicio</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background: #007bff;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+        }
+        nav {
+            background: #333;
+            padding: 10px 0;
+        }
+        nav ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+        }
+        nav ul li {
+            margin: 0 15px;
+        }
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            padding: 5px 10px;
+            transition: background 0.3s;
+        }
+        nav ul li a:hover {
+            background: #007bff;
+            border-radius: 5px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Bienvenido a la Tienda</h1>
+    <header>
+        <h1>Bienvenido a la Tienda</h1>
+    </header>
     <nav>
         <ul>
             <li><a href="{% url 'lista_usuario' %}">Lista de Usuarios</a></li>
@@ -21,5 +74,9 @@
             <li><a href="{% url 'lista_producto_categoria' %}">Lista de Productos por Categoría</a></li>
         </ul>
     </nav>
+    <div class="container">
+        <h2>Explora nuestros productos y servicios</h2>
+        <p>Encuentra todo lo que necesitas en nuestra tienda. ¡Disfruta de una experiencia de compra única!</p>
+    </div>
 </body>
 </html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Órdenes Recientes</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; color: #333; margin: 0; padding: 0; }
+        .container { max-width: 800px; margin: 20px auto; padding: 20px; background: white; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }
+        h1 { text-align: center; color: #007bff; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        table, th, td { border: 1px solid #ddd; }
+        th { background-color: #007bff; color: white; }
+        th, td { padding: 10px; text-align: left; }
+        .currency { text-align: right; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Últimas 5 Órdenes</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Fecha de Orden</th>
+                    <th>Usuario</th>
+                    <th>Total</th>
+                    <th>Estado</th>
+                    <th>Método de Pago</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for orden in ordenes %}
+                <tr>
+                    <td>{{ orden.fecha_orden|date:"d/m/Y" }}</td>
+                    <td>{{ orden.usuario.nombre }}</td>
+                    <td class="currency">${{ orden.total|floatformat:2 }}</td>
+                    <td>{{ orden.estado }}</td>
+                    <td>{{ orden.metodo_pago|default:"No especificado" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" style="text-align: center;">No hay órdenes recientes disponibles.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

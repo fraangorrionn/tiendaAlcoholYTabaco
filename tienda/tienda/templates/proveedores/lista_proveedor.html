@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Proveedores</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; color: #333; margin: 0; padding: 0; }
+        .container { max-width: 800px; margin: 20px auto; padding: 20px; background: white; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }
+        h1 { text-align: center; color: #007bff; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        table, th, td { border: 1px solid #ddd; }
+        th { background-color: #007bff; color: white; }
+        th, td { padding: 10px; text-align: left; }
+        ul { padding-left: 20px; margin: 0; list-style-type: disc; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Lista de Proveedores</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Contacto</th>
+                    <th>Teléfono</th>
+                    <th>Correo</th>
+                    <th>Productos Suministrados</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for proveedor in proveedores %}
+                <tr>
+                    <td>{{ proveedor.nombre }}</td>
+                    <td>{{ proveedor.contacto }}</td>
+                    <td>{{ proveedor.telefono }}</td>
+                    <td>{{ proveedor.correo }}</td>
+                    <td>
+                        {% if proveedor.productos.all %}
+                            <ul>
+                                {% for producto in proveedor.productos.all %}
+                                    <li>{{ producto.nombre }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            Sin productos suministrados
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" style="text-align: center;">No hay proveedores registrados.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

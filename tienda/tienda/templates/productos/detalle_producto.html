@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalles del Producto: {{ producto.nombre }}</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; color: #333; margin: 0; padding: 0; }
+        .container { max-width: 800px; margin: 20px auto; padding: 20px; background: white; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }
+        h1 { text-align: center; color: #007bff; }
+        .details { margin-top: 20px; }
+        .detail-item { margin-bottom: 15px; }
+        .label { font-weight: bold; }
+        .button-container { text-align: center; margin-top: 20px; }
+        .btn { background-color: #007bff; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px; transition: background-color 0.3s; }
+        .btn:hover { background-color: #0056b3; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>{{ producto.nombre }}</h1>
+        <div class="details">
+            <div class="detail-item">
+                <span class="label">Tipo:</span> {{ producto.tipo }}
+            </div>
+            <div class="detail-item">
+                <span class="label">Precio:</span> ${{ producto.precio|floatformat:2 }}
+            </div>
+            <div class="detail-item">
+                <span class="label">Descripción:</span> {{ producto.descripcion }}
+            </div>
+            <div class="detail-item">
+                <span class="label">Stock Disponible:</span> {{ producto.stock }}
+            </div>
+            <div class="detail-item">
+                <span class="label">Tiempo Estimado de Envío:</span> {{ producto.tiempo_estimado_envio|time:"H:i" }}
+            </div>
+            <div class="detail-item">
+                <span class="label">Categorías:</span>
+                <ul>
+                    {% for categoria in producto.categorias.all %}
+                        <li>{{ categoria.nombre }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <div class="button-container">
+            <a href="{% url 'lista_productos' %}" class="btn">Volver a la Lista de Productos</a>
+        </div>
+    </div>
+</body>
+</html>

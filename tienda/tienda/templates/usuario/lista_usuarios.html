@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Usuarios</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; color: #333; margin: 0; padding: 0; }
+        .container { max-width: 800px; margin: 20px auto; padding: 20px; background: white; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }
+        h1 { text-align: center; color: #007bff; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        table, th, td { border: 1px solid #ddd; }
+        th { background-color: #007bff; color: white; }
+        th, td { padding: 10px; text-align: left; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Lista de Usuarios</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Correo</th>
+                    <th>Dirección</th>
+                    <th>Teléfono</th>
+                    <th>Tarjeta</th>
+                    <th>Productos Favoritos</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for usuario in usuarios %}
+                <tr>
+                    <td>{{ usuario.nombre }}</td>
+                    <td>{{ usuario.correo }}</td>
+                    <td>{{ usuario.direccion }}</td>
+                    <td>{{ usuario.telefono }}</td>
+                    <td>
+                        {% if usuario.tarjeta %}
+                            {{ usuario.tarjeta.numero_tarjeta }} ({{ usuario.tarjeta.tipo }})
+                        {% else %}
+                            Sin tarjeta
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if usuario.productos_favoritos.all %}
+                            <ul>
+                                {% for producto in usuario.productos_favoritos.all %}
+                                    <li>{{ producto.nombre }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            Sin favoritos
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

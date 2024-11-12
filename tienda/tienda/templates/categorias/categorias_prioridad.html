@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Categorías Ordenadas por Prioridad</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; color: #333; margin: 0; padding: 0; }
+        .container { max-width: 800px; margin: 20px auto; padding: 20px; background: white; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }
+        h1 { text-align: center; color: #007bff; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        table, th, td { border: 1px solid #ddd; }
+        th { background-color: #007bff; color: white; }
+        th, td { padding: 10px; text-align: left; }
+        .priority-high { font-weight: bold; color: green; }
+        .priority-low { color: red; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Categorías Ordenadas por Prioridad</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Descripción</th>
+                    <th>Prioridad</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for categoria in categorias %}
+                <tr>
+                    <td>{{ categoria.nombre }}</td>
+                    <td>{{ categoria.descripcion }}</td>
+                    <td class="{% if categoria.prioridad >= 5 %}priority-high{% else %}priority-low{% endif %}">{{ categoria.prioridad }}</td>
+                    <td>{{ categoria.estado|capfirst }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" style="text-align: center;">No hay categorías disponibles.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

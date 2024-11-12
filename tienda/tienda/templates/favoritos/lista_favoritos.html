@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Favoritos</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; color: #333; margin: 0; padding: 0; }
+        .container { max-width: 800px; margin: 20px auto; padding: 20px; background: white; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }
+        h1 { text-align: center; color: #007bff; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        table, th, td { border: 1px solid #ddd; }
+        th { background-color: #007bff; color: white; }
+        th, td { padding: 10px; text-align: left; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Lista de Favoritos</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Usuario</th>
+                    <th>Producto</th>
+                    <th>Fecha Agregado</th>
+                    <th>Prioridad</th>
+                    <th>Notas</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for favorito in favoritos %}
+                <tr>
+                    <td>{{ favorito.usuario.nombre }}</td>
+                    <td>{{ favorito.producto.nombre }}</td>
+                    <td>{{ favorito.fecha_agregado|date:"d/m/Y" }}</td>
+                    <td>{{ favorito.prioridad }}</td>
+                    <td>
+                        {% if favorito.notas %}
+                            {{ favorito.notas }}
+                        {% else %}
+                            Sin notas
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

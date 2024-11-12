@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background: #007bff;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+        }
+        nav {
+            background: #333;
+            padding: 10px 0;
+        }
+        nav ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        nav ul li {
+            margin: 0 15px;
+        }
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            padding: 5px 10px;
+            transition: background 0.3s;
+        }
+        nav ul li a:hover {
+            background: #007bff;
+            border-radius: 5px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        .advanced-links {
+            margin-top: 30px;
+        }
+        .advanced-links h2 {
+            margin-bottom: 15px;
+        }
+        .advanced-links ul {
+            list-style: none;
+            padding: 0;
+        }
+        .advanced-links ul li {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Bienvenido a la Tienda</h1>
+    </header>
+    <nav>
+        <ul>
+            <li><a href="{% url 'lista_usuarios' %}">Usuarios</a></li>
+            <li><a href="{% url 'lista_productos' %}">Productos</a></li>
+            <li><a href="{% url 'lista_ordenes' %}">Órdenes</a></li>
+            <li><a href="{% url 'lista_detalles_orden' %}">Detalles de Órdenes</a></li>
+            <li><a href="{% url 'lista_proveedores' %}">Proveedores</a></li>
+            <li><a href="{% url 'lista_inventarios' %}">Inventarios</a></li>
+            <li><a href="{% url 'lista_tarjetas' %}">Tarjetas</a></li>
+            <li><a href="{% url 'lista_favoritos' %}">Favoritos</a></li>
+            <li><a href="{% url 'lista_reclamos' %}">Reclamos</a></li>
+            <li><a href="{% url 'lista_categorias' %}">Categorías</a></li>
+            <li><a href="{% url 'lista_producto_categoria' %}">Productos por Categoría</a></li>
+        </ul>
+    </nav>
+    <div class="container">
+        <h2>Explora nuestros productos y servicios</h2>
+        <p>Encuentra todo lo que necesitas en nuestra tienda. ¡Disfruta de una experiencia de compra única!</p>
+
+        <div class="advanced-links">
+            <h2>Enlaces Avanzados</h2>
+            <ul>
+                <li><a href="{% url 'productos_precio_mayor' precio=1 %}">Productos con Precio Mayor a 1</a> - Filtra productos con un precio superior a 1.</li>
+                <li><a href="{% url 'usuarios_con_productos_favoritos' %}">Usuarios con Múltiples Productos Favoritos</a> - Muestra usuarios que tienen varios productos en su lista de favoritos.</li>
+                <li><a href="{% url 'inventario_bajo_minimo' %}">Productos con Inventario Bajo el Mínimo</a> - Muestra productos cuyo inventario está por debajo del nivel requerido.</li>
+                <li><a href="{% url 'ordenes_total_aggregado' %}">Total de Órdenes (Aggregate)</a> - Muestra la suma total de todas las órdenes realizadas.</li>
+                <li><a href="{% url 'productos_por_categoria_y_precio' categoria_id=1 max_precio=100 %}">Productos por Categoría y Precio Máximo</a> - Filtra productos de la categoría 1 con un precio menor a 100.</li>
+                <li><a href="{% url 'ordenes_recientes' %}">Últimas Órdenes</a> - Muestra las 5 órdenes más recientes, ordenadas por fecha.</li>
+                <li><a href="{% url 'usuarios_sin_telefono' %}">Usuarios sin Número de Teléfono</a> - Lista usuarios que no han registrado un número de teléfono.</li>
+                <li><a href="{% url 'detalle_orden_usuario' usuario_id=1 %}">Órdenes de un Usuario Específico</a> - Muestra las órdenes realizadas por un usuario específico (usuario ID=1).</li>
+                <li><a href="{% url 'categorias_ordenadas_por_prioridad' %}">Categorías Ordenadas por Prioridad</a> - Muestra categorías ordenadas de mayor a menor prioridad.</li>
+                <li><a href="{% url 'buscar_productos_por_nombre_o_tipo' %}">Buscar Productos</a> - Permite buscar productos por nombre o tipo.</li>
+
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

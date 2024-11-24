@@ -1,0 +1,8 @@
+<p><strong>Fecha de Orden:</strong> {{ orden.fecha_orden|date:"d/m/Y" }}</p>
+<p><strong>Total:</strong> ${{ orden.total }}</p>
+<p><strong>Estado:</strong> {{ orden.estado }}</p>
+<p><strong>Usuario:</strong> {{ orden.usuario.nombre }}</p>
+<p><strong>Método de Pago:</strong> {{ orden.metodo_pago|default:"No especificado" }}</p>
+<p><strong>Detalles:</strong> <a href="{% url 'detalle_orden_usuario' orden.usuario.id %}">Ver detalles</a></p>
+
+

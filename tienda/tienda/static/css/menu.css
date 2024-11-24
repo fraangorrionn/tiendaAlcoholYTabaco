@@ -1,0 +1,112 @@
+/* Contenedor del menú */
+.dropdown {
+    background-color: #007bff; /* Fondo azul */
+    display: flex;
+    justify-content: center; /* Centrar horizontalmente los botones */
+    align-items: center;
+    padding: 10px 0;
+    margin: 0;
+    position: relative; /* Permitir posicionar elementos como el logo */
+}
+
+/* Imagen del logo */
+.header .logo {
+    position: absolute;
+    top: 10px; /* Espaciado desde la parte superior */
+    left: 10px; /* Espaciado desde la izquierda */
+    width: 80px; /* Ancho máximo de la imagen */
+    height: auto; /* Mantener proporción */
+    max-height: 80px; /* Altura máxima */
+    object-fit: contain; /* Asegurar que se ajuste sin deformar */
+    border-radius: 5px; /* Opcional: bordes redondeados */
+    z-index: 10; /* Asegura que esté encima del resto del contenido */
+}
+.logo {
+    width: 80px; /* Tamaño reducido */
+    height: auto;
+    object-fit: contain; /* Mantener proporciones */
+    display: block; /* Asegurar que se comporte como un bloque */
+    margin: 10px auto; /* Centrar horizontalmente */
+}
+/* Botón principal del menú */
+.dropbtn {
+    font-size: 16px;
+    background-color: #0056b3; /* Fondo azul oscuro */
+    color: white; /* Texto blanco */
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease; /* Transición para hover */
+}
+
+/* Efecto hover en el botón */
+.dropbtn:hover {
+    background-color: #003f7f; /* Fondo más oscuro al pasar el ratón */
+}
+
+/* Lista de enlaces (Horizontal) */
+.dropdown-content {
+    display: none; /* Oculto inicialmente */
+    flex-direction: column;
+    background-color: #f1f1f1; /* Fondo claro */
+    position: absolute; /* Relativo al contenedor */
+    top: 50px; /* Separación del botón */
+    left: 0;
+    width: 100%; /* Ocupar todo el ancho del contenedor */
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    padding: 10px 0;
+}
+.dropdown-content.show {
+    display: flex;
+}
+/* Elementos de la lista */
+.dropdown-content li {
+    margin: 0 10px; /* Espaciado entre botones */
+}
+
+.dropdown-content li a {
+    text-decoration: none; /* Sin subrayado */
+    background-color: #0056b3; /* Fondo azul oscuro */
+    color: white; /* Texto blanco */
+    padding: 10px 15px; /* Espaciado interno */
+    border-radius: 5px; /* Bordes redondeados */
+    transition: background-color 0.3s ease; /* Efecto de transición */
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 5px; /* Espaciado entre iconos y texto */
+    text-align: left;
+    width: 100%;
+    padding: 10px;
+}
+
+/* Efecto hover en los enlaces */
+.dropdown-content li a:hover {
+    background-color: #003f7f; /* Fondo más oscuro al pasar el ratón */
+}
+
+/* Iconos dentro de los botones */
+.dropdown-content li a i {
+    font-size: 16px;
+    color: #ffcc00; /* Color amarillo para iconos */
+}
+
+/* Responsive para pantallas pequeñas */
+@media (max-width: 768px) {
+    .dropdown {
+        flex-direction: column; /* Disposición vertical */
+        align-items: flex-start; /* Alinear al inicio */
+    }
+
+    .dropdown-content {
+        flex-direction: column; /* Los enlaces se apilan verticalmente */
+        width: 100%; /* Ocupar todo el ancho */
+    }
+
+    .dropdown-content li {
+        margin: 5px 0; /* Espaciado entre botones */
+    }
+}
+

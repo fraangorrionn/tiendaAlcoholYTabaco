@@ -1,0 +1,7 @@
+<p><strong>Nombre:</strong> {{ producto.nombre }}</p>
+<p><strong>Tipo:</strong> {{ producto.tipo }}</p>
+<p><strong>Precio:</strong> ${{ producto.precio|floatformat:2 }}</p>
+<p><strong>Precio (con impuestos):</strong> ${{ producto.precio|add:10|floatformat:2 }}</p>
+<p><strong>Stock:</strong> {{ producto.stock }}</p>
+
+

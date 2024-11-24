@@ -1,0 +1,12 @@
+{% extends "principal.html" %}
+{% load static %}
+{% block link_css %}
+    <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
+{% endblock %}
+
+{% block contenido %}
+    <div class="container">
+        <h1>Suma Total de Todas las Órdenes</h1>
+        {% include 'Listas/ordenes/total_aggregado.html' %}
+    </div>
+{% endblock %}

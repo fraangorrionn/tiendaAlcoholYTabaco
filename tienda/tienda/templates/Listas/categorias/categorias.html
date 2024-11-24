@@ -1,0 +1,8 @@
+<p><strong>Nombre:</strong> {{ categoria.nombre }}</p>
+<p><strong>Descripción:</strong> {{ categoria.descripcion }}</p>
+<p><strong>Fecha de Creación:</strong> {{ categoria.fecha_creacion|date:"d/m/Y" }}</p>
+<p><strong>Estado:</strong> 
+    <span class="{% if categoria.estado == 'activo' %}active{% else %}inactive{% endif %}">
+        {{ categoria.estado|capfirst }}
+    </span>
+</p>

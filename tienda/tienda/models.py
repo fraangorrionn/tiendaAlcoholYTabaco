@@ -10,7 +10,7 @@ class Usuario(models.Model):
     correo = models.EmailField(default='default@example.com')
     direccion = models.CharField(max_length=255, default='sin_direccion')
     tipo_usuario = models.CharField(max_length=50, choices=TIPOS_USUARIO, null=True)
-    telefono = models.CharField(max_length=15, blank=True)
+    telefono = models.CharField(max_length=15, blank=True, null= True)
     productos_favoritos = models.ManyToManyField('Producto', through='Favoritos', related_name='usuarios_favoritos')
 
 class Producto(models.Model):
@@ -47,7 +47,14 @@ class DetalleOrden(models.Model):
     cantidad = models.IntegerField(default=1)
     precio_unitario = models.DecimalField(max_digits=10, decimal_places=2)
     descuento_aplicado = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    tasa_impuesto = models.FloatField(default=0.0) 
+    tasa_impuesto = models.FloatField(default=0.0)
+
+    def subtotal(self):
+        # Calcula el subtotal con impuestos y descuento
+        total = self.cantidad * self.precio_unitario
+        descuento = total * (self.descuento_aplicado / 100)
+        impuesto = total * (self.tasa_impuesto / 100)
+        return total - descuento + impuesto
 
 class Provedor(models.Model):
     nombre = models.CharField(max_length=100)

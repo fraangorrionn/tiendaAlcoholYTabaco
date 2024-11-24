@@ -1,0 +1,11 @@
+<p><strong>Producto:</strong> {{ producto_categoria.producto.nombre }}</p>
+<p><strong>Categoría:</strong> {{ producto_categoria.categoria.nombre }}</p>
+<p><strong>Fecha de Asociación:</strong> {{ producto_categoria.fecha_asociacion|date:"d/m/Y" }}</p>
+<p><strong>Nota Adicional:</strong> 
+    {% if producto_categoria.nota_adicional %}
+        {{ producto_categoria.nota_adicional }}
+    {% else %}
+        Sin nota
+    {% endif %}
+</p>
+<p><strong>Estado:</strong> {{ producto_categoria.estado }}</p>

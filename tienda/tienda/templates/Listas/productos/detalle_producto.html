@@ -1,0 +1,23 @@
+<div class="detail-item">
+    <p><strong>Tipo:</strong> {{ producto.tipo }}</p>
+</div>
+<div class="detail-item">
+    <p><strong>Precio:</strong> ${{ producto.precio|floatformat:2 }}</p>
+</div>
+<div class="detail-item">
+    <p><strong>Descripción:</strong> {{ producto.descripcion }}</p>
+</div>
+<div class="detail-item">
+    <p><strong>Stock Disponible:</strong> {{ producto.stock }}</p>
+</div>
+<div class="detail-item">
+    <p><strong>Tiempo Estimado de Envío:</strong> {{ producto.tiempo_estimado_envio|time:"H:i" }}</p>
+</div>
+<div class="detail-item">
+    <p><strong>Categorías:</strong></p>
+    <ul>
+        {% for categoria in producto.categorias.all %}
+            <li>{{ categoria.nombre }}</li>
+        {% endfor %}
+    </ul>
+</div>

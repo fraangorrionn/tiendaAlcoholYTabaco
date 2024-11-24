@@ -1,0 +1,25 @@
+<p><strong>Nombre:</strong> {{ usuario.nombre }}</p>
+<p><strong>Correo:</strong> {{ usuario.correo }}</p>
+<p><strong>Dirección:</strong> {{ usuario.direccion }}</p>
+<p><strong>Teléfono:</strong> {{ usuario.telefono }}</p>
+<p><strong>Tarjeta:</strong> 
+    {% if usuario.tarjeta %}
+        {{ usuario.tarjeta.numero_tarjeta }} ({{ usuario.tarjeta.tipo }})
+    {% else %}
+        Sin tarjeta
+    {% endif %}
+</p>
+<p><strong>Productos Favoritos:</strong></p>
+<ul>
+    {% if usuario.productos_favoritos.all %}
+        {% for producto in usuario.productos_favoritos.all|slice:":5" %}
+            <li>{{ producto.nombre }}</li>
+        {% endfor %}
+        {% if usuario.productos_favoritos.all|length > 5 %}
+            <li>y más...</li>
+        {% endif %}
+    {% else %}
+        <li>Sin favoritos</li>
+    {% endif %}
+</ul>
+

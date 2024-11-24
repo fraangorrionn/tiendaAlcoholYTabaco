@@ -1,0 +1,14 @@
+<p><strong>Nombre:</strong> {{ proveedor.nombre }}</p>
+<p><strong>Contacto:</strong> {{ proveedor.contacto }}</p>
+<p><strong>Teléfono:</strong> {{ proveedor.telefono }}</p>
+<p><strong>Correo:</strong> {{ proveedor.correo }}</p>
+<p><strong>Productos Suministrados:</strong></p>
+<ul>
+    {% if proveedor.productos.all %}
+        {% for producto in proveedor.productos.all %}
+            <li>{{ producto.nombre }}</li>
+        {% endfor %}
+    {% else %}
+        <li>Sin productos suministrados</li>
+    {% endif %}
+</ul>

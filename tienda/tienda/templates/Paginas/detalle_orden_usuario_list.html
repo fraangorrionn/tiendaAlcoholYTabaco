@@ -1,0 +1,19 @@
+{% extends "principal.html" %}
+{% load static %}
+{% block link_css %}
+    <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
+{% endblock %}
+
+{% block contenido %}
+    <div class="container">
+        <h1>Detalles de Órdenes de {{ ordenes_usuario.0.usuario.nombre }}</h1>
+
+        {% if ordenes_usuario %}
+            {% for orden in ordenes_usuario %}
+                {% include 'Listas/ordenes/detalle_orden_usuario.html' %}
+            {% endfor %}
+        {% else %}
+            <p style="text-align: center;">Este usuario no tiene órdenes registradas.</p>
+        {% endif %}
+    </div>
+{% endblock %}

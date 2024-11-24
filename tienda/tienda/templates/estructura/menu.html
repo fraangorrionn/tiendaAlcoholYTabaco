@@ -1,0 +1,26 @@
+{% load static %}
+<div class="dropdown">
+    <!-- Imagen del logo -->
+    <img src="{% static 'imagenes/logo.webp' %}" alt="Logo de la Página" class="logo">
+
+    <!-- Botón para abrir/cerrar el menú -->
+    <button class="dropbtn" id="menuButton">
+        <i class="fa-solid fa-bars"></i> Menú
+    </button>
+
+    <!-- Contenido del menú -->
+    <ul class="dropdown-content" id="menuDropdown">
+        <li><a href="{% url 'index' %}"><i class="fa-solid fa-house"></i> Inicio</a></li>
+        <li><a href="{% url 'lista_usuarios' %}"><i class="fa-solid fa-user"></i> Usuarios</a></li>
+        <li><a href="{% url 'lista_productos' %}"><i class="fa-solid fa-box"></i> Productos</a></li>
+        <li><a href="{% url 'lista_ordenes' %}"><i class="fa-solid fa-receipt"></i> Órdenes</a></li>
+        <li><a href="{% url 'lista_detalles_orden' %}"><i class="fa-solid fa-list"></i> Detalles de Órdenes</a></li>
+        <li><a href="{% url 'lista_proveedores' %}"><i class="fa-solid fa-truck"></i> Proveedores</a></li>
+        <li><a href="{% url 'lista_inventarios' %}"><i class="fa-solid fa-boxes"></i> Inventarios</a></li>
+        <li><a href="{% url 'lista_tarjetas' %}"><i class="fa-solid fa-credit-card"></i> Tarjetas</a></li>
+        <li><a href="{% url 'lista_favoritos' %}"><i class="fa-solid fa-heart"></i> Favoritos</a></li>
+        <li><a href="{% url 'lista_reclamos' %}"><i class="fa-solid fa-exclamation-circle"></i> Reclamos</a></li>
+        <li><a href="{% url 'lista_categorias' %}"><i class="fa-solid fa-tags"></i> Categorías</a></li>
+        <li><a href="{% url 'lista_producto_categoria' %}"><i class="fa-solid fa-boxes-stacked"></i> Productos por Categoría</a></li>
+    </ul>    
+</div>

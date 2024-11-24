@@ -1,0 +1,8 @@
+<p><strong>Nombre:</strong> {{ categoria.nombre }}</p>
+<p><strong>Descripción:</strong> {{ categoria.descripcion }}</p>
+<p><strong>Prioridad:</strong> 
+    <span class="{% if categoria.prioridad >= 5 %}priority-high{% else %}priority-low{% endif %}">
+        {{ categoria.prioridad }}
+    </span>
+</p>
+<p><strong>Estado:</strong> {{ categoria.estado|capfirst }}</p>

@@ -1,0 +1,5 @@
+<p><strong>Usuario:</strong> {{ reclamo.usuario.nombre }}</p>
+<p><strong>Descripción:</strong> {{ reclamo.descripcion }}</p>
+<p><strong>Fecha:</strong> {{ reclamo.fecha|date:"d/m/Y" }}</p>
+<p><strong>Estado:</strong> {{ reclamo.estado }}</p>
+<p><strong>Respuesta:</strong> {{ reclamo.respuesta|default:"Sin respuesta" }}</p>

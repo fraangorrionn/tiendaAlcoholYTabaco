@@ -1,0 +1,18 @@
+{% extends "principal.html" %}
+{% load static %}
+{% block link_css %}
+    <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
+{% endblock %}
+
+{% block contenido %}
+    <div class="container">
+        <h1>Categorías Ordenadas por Prioridad</h1>
+        {% for categoria in categorias %}
+        <article>
+            {% include 'Listas/categorias/categorias_prioridad.html' %}
+        </article>
+        {% empty %}
+        <p style="text-align: center;">No hay categorías disponibles.</p>
+        {% endfor %}
+    </div>
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends "principal.html" %}
+{% load static %}
+{% block link_css %}
+    <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
+{% endblock %}
+
+{% block contenido %}
+    <div class="container">
+        <h1>{{ producto.nombre }}</h1>
+        <div class="details">
+            {% include 'Listas/productos/detalle_producto.html' %}
+        </div>
+        <div class="button-container">
+            <a href="{% url 'lista_productos' %}" class="btn">Volver a la Lista de Productos</a>
+        </div>
+    </div>
+{% endblock %}

@@ -266,3 +266,86 @@ Requisitos cumplidos: Utiliza un parámetro de tipo string.
 
 Descripción: Busca productos por nombre o tipo.
 Requisitos cumplidos: Utiliza filtros con condiciones OR.
+
+----------------- Templates -------------------
+
+#Usar al menos 5 templates tags diferentes: if-else, for..empty
+**Ubicación:** `templates/Paginas/detalles_orden_list.html`
+
+**Template tags usados:**
+1. `{% extends %}`: Hereda de `principal.html`.
+2. `{% load %}`: Carga archivos estáticos para la plantilla.
+3. `{% block ... %}`: Define bloques de contenido específicos para CSS y el cuerpo principal.
+4. `{% for ... empty %}`: Itera sobre los detalles de las órdenes y muestra un mensaje si no hay resultados.
+5. `{% include %}`: Incluye un template parcial para renderizar cada detalle.
+
+### Template: operadores usados
+
+**Ubicación:** `templates/Paginas/resultados_busqueda.html`
+
+**Operadores usados:**
+1. **`if` (Evaluación de igualdad):** Usado en `{% if productos %}` para comprobar si hay productos disponibles.
+2. **`else` (Lógica alternativa):** Usado para mostrar un mensaje cuando no hay productos disponibles.
+3. **`|length` (Longitud):** Usado para mostrar la cantidad de productos encontrados.
+4. **`|default` (Valor predeterminado):** Usado para mostrar un texto cuando no hay consulta en la variable `query`.
+5. **`for...empty` (Inclusión lógica):** Usado para iterar sobre los productos o mostrar un mensaje si no hay elementos en la lista.
+
+### Templates filters usados
+1. floatformat
+**Ubicacion** `templates/Listas/productos.html`
+
+{{ producto.precio|floatformat:2 }}
+Muestra el precio con dos decimales, asegurando un formato adecuado para monedas.
+
+2. time
+**Ubicacion** `templates/Listas/detalle_producto.html`
+{{ producto.tiempo_estimado_envio|time:"H:i" }}
+Formatea el campo producto.tiempo_estimado_envio para mostrar solo la hora y minutos en formato HH:mm.
+
+3. capfirst
+**Ubicacion** `templates/Listas/categorias_prioridad.html`
+{{ categoria.estado|capfirst }}
+Convierte la primera letra del valor de categoria.estado en mayúscula, manteniendo el resto en minúsculas.
+Resultado: "activo" → "Activo".
+
+4. date
+**Ubicación**  `templates/Listas/categorias.html`
+{{ categoria.fecha_creacion|date:"d/m/Y" }}
+Formatea el campo fecha_creacion en formato de fecha día/mes/año.
+
+5. join
+**Ubicación** `templates/Listas/usuarios_con_productos_favoritos.html`
+{{ producto.categorias.all|join:", " }}
+Combina todos los elementos de categorias.all en una sola cadena, separándolos con comas.
+Resultado: Una lista de categorías como ["Bebidas", "Vinos", "Tintos"] se mostrará como "Bebidas, Vinos, Tintos".
+
+6. capfirst
+**Ubicación** `templates/Listas/usuarios_sin_telefono.html`
+{{ usuario.tipo_usuario|capfirst }}
+Convierte la primera letra del valor de tipo_usuario en mayúscula, dejando el resto en minúsculas.
+Resultado: "administrador" → "Administrador".
+
+7. slice
+**Ubicación** `templates/Listas/usuarios.html`
+usuario.productos_favoritos.all|slice:":5"
+Limita la lista de productos favoritos a los primeros 5 elementos.
+Ejemplo de resultado:
+Lista completa: ["Producto1", "Producto2", "Producto3", "Producto4", "Producto5", "Producto6"]
+Con slice:":5": ["Producto1", "Producto2", "Producto3", "Producto4", "Producto5"]
+
+8. length (combinado con if)
+**Ubicación** `templates/Listas/usuarios.html`
+{% if usuario.productos_favoritos.all|length > 5 %}
+Evalúa si hay más de 5 productos en la lista, mostrando un mensaje adicional si es el caso.
+
+9. default
+**Ubicación** `templates/Listas/ordenes.html`
+{{ orden.metodo_pago|default:"No especificado" }}
+Muestra el texto "No especificado" si orden.metodo_pago no tiene un valor asignado (es None o vacío).
+
+10. add
+**Ubicación** `templates/Listas/por_nombre_o_tipo.html`
+{{ producto.precio|add:10|floatformat:2 }}
+Suma 10 unidades al precio del producto, simulando un cálculo de impuestos u otro ajuste.
+Ejemplo de resultado:
+Si el precio es 100.00, el resultado será 110.00.

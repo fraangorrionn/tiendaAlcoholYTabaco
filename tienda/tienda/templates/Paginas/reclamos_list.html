@@ -1,0 +1,42 @@
+{% extends "principal.html" %}
+{% load static %}
+{% block link_css %}
+    <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
+{% endblock %}
+
+{% block contenido %}
+    <div class="container">
+        <h1>Lista de Reclamos</h1>
+
+        <!-- Enlaces para alternar entre reclamos pendientes y todos los reclamos -->
+        <div class="filter-links">
+            <a href="{% url 'lista_reclamos' %}?pendientes=true">Ver solo pendientes</a> |
+            <a href="{% url 'lista_reclamos' %}">Ver todos</a>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Usuario</th>
+                    <th>Descripción</th>
+                    <th>Fecha</th>
+                    <th>Estado</th>
+                    <th>Respuesta</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for reclamo in reclamos %}
+                <tr>
+                    <td colspan="5">
+                        {% include 'Listas/reclamos/reclamo.html' %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" style="text-align: center;">No hay reclamos disponibles.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

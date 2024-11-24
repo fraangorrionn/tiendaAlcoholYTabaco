@@ -1,0 +1,6 @@
+<p><strong>Orden ID:</strong> {{ detalle.orden.id }}</p>
+<p><strong>Producto:</strong> {{ detalle.producto.nombre }}</p>
+<p><strong>Cantidad:</strong> {{ detalle.cantidad }}</p>
+<p><strong>Precio Unitario:</strong> ${{ detalle.precio_unitario|floatformat:2 }}</p>
+<p><strong>Descuento Aplicado:</strong> ${{ detalle.descuento_aplicado|floatformat:2 }}</p>
+<p><strong>Subtotal:</strong> ${{ detalle.subtotal|floatformat:2 }}</p>

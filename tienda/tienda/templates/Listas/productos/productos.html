@@ -1,0 +1,21 @@
+<p><strong>Nombre:</strong> <a href="{% url 'detalle_producto' producto.id %}">{{ producto.nombre }}</a></p>
+<p><strong>Precio:</strong> ${{ producto.precio|floatformat:2 }}</p>
+<p><strong>Tipo:</strong> {{ producto.tipo }}</p>
+<p><strong>Stock:</strong> {{ producto.stock }}</p>
+<p><strong>Categorías:</strong></p>
+<ul>
+    {% if producto.categorias.all %}
+        {% for categoria in producto.categorias.all %}
+            <li>{{ categoria.nombre }}</li>
+        {% endfor %}
+    {% else %}
+        <li>Sin categoría</li>
+    {% endif %}
+</ul>
+<p><strong>Tiempo Estimado de Envío:</strong> 
+    {% if producto.tiempo_estimado_envio %}
+        {{ producto.tiempo_estimado_envio }}
+    {% else %}
+        No especificado
+    {% endif %}
+</p>

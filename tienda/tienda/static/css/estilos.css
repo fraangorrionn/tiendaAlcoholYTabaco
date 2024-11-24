@@ -1,0 +1,109 @@
+/* General */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column; /* Disposición vertical */
+}
+/* Asegurar que el footer esté en la parte inferior */
+html, body {
+    height: 100%; /* El documento debe ocupar toda la altura de la ventana */
+    margin: 0; /* Elimina los márgenes por defecto */
+}
+
+main {
+    flex: 1; /* El contenido principal ocupará el espacio restante */
+}
+
+/* Contenedor Principal */
+.container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Encabezados */
+h1, h2, h3 {
+    text-align: center;
+    color: #007bff;
+    margin-bottom: 20px;
+}
+
+/* Tablas */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+table, th, td {
+    border: 1px solid #ddd;
+}
+
+th {
+    background-color: #007bff;
+    color: white;
+    text-align: left;
+}
+
+th, td {
+    padding: 10px;
+}
+
+/* Botones */
+a, button {
+    display: inline-block;
+    text-decoration: none;
+    background-color: #007bff;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+    text-align: center;
+}
+
+a:hover, button:hover {
+    background-color: #0056b3;
+}
+
+/* Formularios */
+input[type="text"], input[type="email"], textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+button {
+    border: none;
+    cursor: pointer;
+}
+
+/* Listas */
+ul {
+    padding-left: 20px;
+    margin: 0;
+    list-style-type: disc;
+}
+
+/* Errores */
+.error-container {
+    text-align: center;
+    padding: 50px;
+}
+
+.error-container h1 {
+    color: #e74c3c;
+}
+
+.error-container a {
+    margin-top: 20px;
+    display: inline-block;
+}

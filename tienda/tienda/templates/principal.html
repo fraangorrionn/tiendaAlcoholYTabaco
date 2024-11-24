@@ -1,0 +1,31 @@
+{% load static %}
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{% block title %}Mi Tienda{% endblock %}</title>
+        <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
+        <link rel="stylesheet" href="{% static 'css/menu.css' %}">
+        <link rel="stylesheet" href="{% static 'css/pie.css' %}">
+        <script src="{% static 'javascript/menu.js' %}"></script>
+    </head>
+    <body>
+        <!-- Cabecera -->
+        <header class="header">
+            <img src="{% static 'imagenes/logo.webp' %}" alt="Logo de la Tienda" class="logo">
+            {% block header %}
+                {% include "estructura/menu.html" %}
+            {% endblock %}
+        </header>
+
+        <!-- Contenido principal -->
+        <main>
+            {% block contenido %}
+            {% endblock %}
+        </main>
+
+        <!-- Pie de página -->
+        {% include "estructura/pie.html" %}
+    </body>
+</html>
+

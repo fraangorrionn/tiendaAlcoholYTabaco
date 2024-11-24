@@ -1,0 +1,9 @@
+<p><strong>Producto:</strong> {{ inventario.producto.nombre }}</p>
+<p><strong>Cantidad Disponible:</strong> 
+    <span class="{% if inventario.cantidad_disponible < inventario.minimo_requerido %}low-stock{% endif %}">
+        {{ inventario.cantidad_disponible }}
+    </span>
+</p>
+<p><strong>Ubicación:</strong> {{ inventario.ubicacion }}</p>
+<p><strong>Mínimo Requerido:</strong> {{ inventario.minimo_requerido }}</p>
+<p><strong>Última Actualización:</strong> {{ inventario.fecha_actualizacion|date:"d/m/Y" }}</p>

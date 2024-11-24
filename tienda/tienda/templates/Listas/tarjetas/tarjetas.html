@@ -1,0 +1,11 @@
+<p><strong>Usuario:</strong> {{ tarjeta.usuario.nombre }}</p>
+<p><strong>Número de Tarjeta:</strong> {{ tarjeta.numero_tarjeta }}</p>
+<p><strong>Fecha de Expiración:</strong> {{ tarjeta.fecha_expiracion|date:"d/m/Y" }}</p>
+<p><strong>Tipo:</strong> {{ tarjeta.tipo }}</p>
+<p><strong>Estado:</strong> 
+    {% if tarjeta.fecha_expiracion > today %}
+        Válida
+    {% else %}
+        Expirada
+    {% endif %}
+</p>

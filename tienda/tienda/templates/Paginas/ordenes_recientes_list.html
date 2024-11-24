@@ -1,0 +1,36 @@
+{% extends "principal.html" %}
+{% load static %}
+{% block link_css %}
+    <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
+{% endblock %}
+
+{% block contenido %}
+    <div class="container">
+        <h1>Lista de Órdenes</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Fecha de Orden</th>
+                    <th>Total</th>
+                    <th>Estado</th>
+                    <th>Usuario</th>
+                    <th>Método de Pago</th>
+                    <th>Detalles</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for orden in ordenes %}
+                <tr>
+                    <td colspan="6">
+                        {% include 'Listas/ordenes/ordenes_recientes.html' %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" style="text-align: center;">No hay órdenes registradas.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

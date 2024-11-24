@@ -1,0 +1,11 @@
+<p><strong>Usuario:</strong> {{ favorito.usuario.nombre }}</p>
+<p><strong>Producto:</strong> {{ favorito.producto.nombre }}</p>
+<p><strong>Fecha Agregado:</strong> {{ favorito.fecha_agregado|date:"d/m/Y" }}</p>
+<p><strong>Prioridad:</strong> {{ favorito.prioridad }}</p>
+<p><strong>Notas:</strong> 
+    {% if favorito.notas %}
+        {{ favorito.notas }}
+    {% else %}
+        Sin notas
+    {% endif %}
+</p>

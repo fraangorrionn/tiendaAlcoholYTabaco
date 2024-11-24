@@ -26,8 +26,7 @@ urlpatterns = [
     path('categorias/prioridad/', views.categorias_ordenadas_por_prioridad, name='categorias_ordenadas_por_prioridad'),  # Order_by
     path('productos/buscar/<str:nombre>/', views.buscar_producto, name='buscar_producto'),
     path('productos/<int:producto_id>/', views.detalle_producto, name='detalle_producto'),
-     path('productos/buscar/', views.buscar_productos_por_nombre_o_tipo, name='buscar_productos_por_nombre_o_tipo'),
-
+    path('productos/buscar/', views.buscar_productos_por_nombre_o_tipo, name='buscar_productos_por_nombre_o_tipo'),
 
 ]
 

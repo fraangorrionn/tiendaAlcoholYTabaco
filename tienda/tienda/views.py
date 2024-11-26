@@ -1,7 +1,8 @@
 from django.db.models import Q, Count, Sum, F , Prefetch
 from django.utils import timezone
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from .models import Usuario, Producto, Orden, DetalleOrden, Provedor, Inventario, Tarjeta, Favoritos, Reclamo, Categoria, ProductoCategoria
+from .forms import *
 
 # Vista principal que redirige al índice de URLs.
 def index(request):
@@ -160,6 +161,17 @@ def buscar_productos_por_nombre_o_tipo(request):
         productos = Producto.objects.none()
     
     return render(request, 'Paginas/por_nombre_o_tipo_list.html', {'productos': productos, 'query': query})
+
+#Formularios
+
+def crear_usuario(request):
+    formulario = UsuarioModelForm(request.POST or None)
+    if request.method == "POST":
+        if formulario.is_valid():
+            formulario.save()  # Guardar el usuario y manejar relaciones ManyToMany automáticamente
+            return redirect("usuarios_list")  # Cambiar al nombre de tu URL de lista de usuarios
+    return render(request, 'usuario/crear_usuario.html', {"formulario": formulario})
+
 
 # Errores
 def handler_404(request, exception):

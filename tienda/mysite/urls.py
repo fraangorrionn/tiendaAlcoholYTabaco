@@ -22,3 +22,10 @@ urlpatterns = [
     path("__debug__/", include("debug_toolbar.urls")),
     path('', include('tienda.urls')),
 ]
+
+from django.conf.urls import handler404, handler500, handler403, handler400
+
+handler404 = 'tienda.views.handler_404'
+handler500 = 'tienda.views.handler_500'
+handler403 = 'tienda.views.handler_403'
+handler400 = 'tienda.views.handler_400'

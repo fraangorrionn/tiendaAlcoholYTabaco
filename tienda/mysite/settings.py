@@ -40,6 +40,13 @@ INSTALLED_APPS = [
     'tienda',
     'django_seed',
     'debug_toolbar',
+    'django_bootstrap5',
+    'django_bootstrap_icons',
+    'bootstrap_datepicker_plus',
+    'jquery',
+    'moment',
+    'crispy_forms',
+    'crispy_bootstrap5',
 ]
 
 MIDDLEWARE = [

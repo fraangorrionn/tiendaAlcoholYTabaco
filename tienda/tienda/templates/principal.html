@@ -3,29 +3,41 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>{% block title %}Mi Tienda{% endblock %}</title>
+        <title>{% block title %}Mi Tienda de alcohol y tabaco{% endblock %}</title>
         <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
         <link rel="stylesheet" href="{% static 'css/menu.css' %}">
         <link rel="stylesheet" href="{% static 'css/pie.css' %}">
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
         <script src="{% static 'javascript/menu.js' %}"></script>
     </head>
     <body>
         <!-- Cabecera -->
-        <header class="header">
-            <img src="{% static 'imagenes/logo.webp' %}" alt="Logo de la Tienda" class="logo">
-            {% block header %}
-                {% include "estructura/menu.html" %}
-            {% endblock %}
+        <header class="header bg-light">
+            <div class="container d-flex justify-content-between align-items-center py-3">
+                <img src="{% static 'imagenes/logo.webp' %}" alt="Logo de la Tienda" class="logo">
+                {% block header %}
+                    {% include "estructura/menu.html" %}
+                {% endblock %}
+            </div>
         </header>
 
         <!-- Contenido principal -->
-        <main>
+        <main class="container my-5">
             {% block contenido %}
             {% endblock %}
         </main>
 
         <!-- Pie de página -->
-        {% include "estructura/pie.html" %}
+        <footer class="footer bg-dark text-light py-3">
+            <div class="container">
+                {% include "estructura/pie.html" %}
+            </div>
+        </footer>
+
+        <!-- Bootstrap JS Bundle -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>
+
 

@@ -1,0 +1,40 @@
+{% extends 'principal.html' %}
+
+{% block title %}Crear Usuario - Mi Tienda{% endblock %}
+
+{% block contenido %}
+<div class="container mt-5">
+    <h1>Crear Usuario</h1>
+    <form method="post" class="needs-validation" novalidate>
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="id_nombre" class="form-label">Nombre del Usuario</label>
+            {{ form.nombre }}
+            <div class="form-text">Máximo 100 caracteres</div>
+        </div>
+        <div class="mb-3">
+            <label for="id_correo" class="form-label">Correo Electrónico</label>
+            {{ form.correo }}
+            <div class="form-text">Debe ser un correo válido.</div>
+        </div>
+        <div class="mb-3">
+            <label for="id_direccion" class="form-label">Dirección</label>
+            {{ form.direccion }}
+        </div>
+        <div class="mb-3">
+            <label for="id_tipo_usuario" class="form-label">Tipo de Usuario</label>
+            {{ form.tipo_usuario }}
+        </div>
+        <div class="mb-3">
+            <label for="id_telefono" class="form-label">Teléfono</label>
+            {{ form.telefono }}
+        </div>
+        <div class="mb-3">
+            <label for="id_productos_favoritos" class="form-label">Productos Favoritos</label>
+            {{ form.productos_favoritos }}
+            <div class="form-text">Selecciona uno o más productos.</div>
+        </div>
+        <button type="submit" class="btn btn-primary">Crear Usuario</button>
+    </form>
+</div>
+{% endblock %}

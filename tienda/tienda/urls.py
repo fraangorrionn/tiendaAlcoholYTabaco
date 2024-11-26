@@ -29,8 +29,3 @@ urlpatterns = [
     path('productos/buscar/', views.buscar_productos_por_nombre_o_tipo, name='buscar_productos_por_nombre_o_tipo'),
 
 ]
-
-handler404 = 'tienda.views.handler_404'
-handler500 = 'tienda.views.handler_500'
-handler403 = 'tienda.views.handler_403'
-handler400 = 'tienda.views.handler_400'

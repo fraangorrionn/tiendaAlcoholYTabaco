@@ -349,3 +349,22 @@ Muestra el texto "No especificado" si orden.metodo_pago no tiene un valor asigna
 Suma 10 unidades al precio del producto, simulando un cálculo de impuestos u otro ajuste.
 Ejemplo de resultado:
 Si el precio es 100.00, el resultado será 110.00.
+
+------Comando-------
+python3 -m venv myvenv
+source myvenv/bin/activate
+
+python -m pip install --upgrade pip
+pip install -r requirements.txt
+
+python manage.py migrate
+python manage.py makemigrations tienda
+python manage.py migrate tienda
+python manage.py seed tienda --number=20
+python manage.py dumpdata --indent 4 > tienda/fixtures/datos.json
+python manage.py loaddata tienda/fixtures/datos.json
+
+python manage.py createsuperuser
+python manage.py runserver
+
+git add . git commit -m 'Completado' git push git pull

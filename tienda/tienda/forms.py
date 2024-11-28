@@ -5,7 +5,7 @@ from datetime import date
 import datetime
 
 
-class UsuarioModelForm(ModelForm):
+class UsuarioModelForm(forms.ModelForm):
     class Meta:
         model = Usuario
         fields = ['nombre', 'correo', 'direccion', 'tipo_usuario', 'telefono', 'productos_favoritos']
@@ -23,9 +23,11 @@ class UsuarioModelForm(ModelForm):
             "productos_favoritos": "Selecciona uno o más productos favoritos.",
         }
         widgets = {
+            "nombre": forms.TextInput(attrs={"class": "form-control", "placeholder": "Nombre del usuario"}),
+            "correo": forms.EmailInput(attrs={"class": "form-control", "placeholder": "usuario@example.com"}),
             "direccion": forms.TextInput(attrs={"placeholder": "Dirección completa", "class": "form-control"}),
             "tipo_usuario": forms.Select(attrs={"class": "form-select"}),
-            "productos_favoritos": forms.CheckboxSelectMultiple(),
             "telefono": forms.TextInput(attrs={"placeholder": "Número de teléfono", "class": "form-control"}),
+            "productos_favoritos": forms.CheckboxSelectMultiple(),
         }
-        localized_fields = ['telefono']
+        

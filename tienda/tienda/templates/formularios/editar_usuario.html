@@ -1,0 +1,13 @@
+{% extends 'principal.html' %}
+
+{% block title %}Editar Usuario{% endblock %}
+
+{% block content %}
+<h2>Editar Usuario</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ formulario.as_p }}
+    <button type="submit">Actualizar</button>
+</form>
+<a href="{% url 'leer_usuarios' %}">Volver a la lista</a>
+{% endblock %}

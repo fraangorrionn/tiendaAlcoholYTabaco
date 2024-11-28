@@ -164,13 +164,45 @@ def buscar_productos_por_nombre_o_tipo(request):
 
 #Formularios
 
+# Crear un nuevo usuario
 def crear_usuario(request):
     formulario = UsuarioModelForm(request.POST or None)
     if request.method == "POST":
         if formulario.is_valid():
-            formulario.save()  # Guardar el usuario y manejar relaciones ManyToMany automáticamente
-            return redirect("usuarios_list")  # Cambiar al nombre de tu URL de lista de usuarios
-    return render(request, 'usuario/crear_usuario.html', {"formulario": formulario})
+            formulario.save()
+            return redirect("lista_usuarios")  # Redirige a la lista de usuarios
+    return render(request, 'formularios/crear_usuario.html', {"formulario": formulario})
+
+# Leer la lista de usuarios
+def leer_usuarios(request):
+    usuarios = Usuario.objects.all()
+    return render(request, 'formularios/leer_usuarios.html', {"usuarios": usuarios})
+
+# Actualizar un usuario existente
+def editar_usuario(request, pk):
+    try:
+        usuario = Usuario.objects.get(pk=pk)  # Manejo manual de consulta
+    except Usuario.DoesNotExist:
+        return render(request, '404.html', status=404)  # Mostrar error 404 si no se encuentra
+
+    formulario = UsuarioModelForm(request.POST or None, instance=usuario)
+    if request.method == "POST":
+        if formulario.is_valid():
+            formulario.save()
+            return redirect("lista_usuarios")
+    return render(request, 'formularios/editar_usuario.html', {"formulario": formulario, "usuario": usuario})
+
+# Eliminar un usuario
+def eliminar_usuario(request, pk):
+    try:
+        usuario = Usuario.objects.get(pk=pk)
+    except Usuario.DoesNotExist:
+        return render(request, '404.html', status=404)
+
+    if request.method == "POST":
+        usuario.delete()
+        return redirect("lista_usuarios")
+    return render(request, 'formularios/eliminar_usuario.html', {"usuario": usuario})
 
 
 # Errores

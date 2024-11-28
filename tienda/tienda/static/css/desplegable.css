@@ -1,0 +1,48 @@
+/* Contenedor principal del dropdown */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+/* Estilo del botón */
+.dropbtn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+}
+
+/* Estilo cuando el botón está activo */
+.dropbtn:hover {
+    background-color: #45a049;
+}
+
+/* Contenido del menú desplegable */
+.dropdown-content {
+    display: none; /* Por defecto está oculto */
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+/* Enlaces dentro del menú */
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+/* Cambio de color al pasar el ratón */
+.dropdown-content a:hover {
+    background-color: #f1f1f1;
+}
+
+/* Mostrar el menú cuando está activo */
+.dropdown.show .dropdown-content {
+    display: block;
+}

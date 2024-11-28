@@ -1,6 +1,6 @@
 {% extends 'principal.html' %}
 
-{% block title %}Crear Usuario - Mi Tienda{% endblock %}
+{% block title %}Crear Usuario{% endblock %}
 
 {% block contenido %}
 <div class="container mt-5">
@@ -9,30 +9,30 @@
         {% csrf_token %}
         <div class="mb-3">
             <label for="id_nombre" class="form-label">Nombre del Usuario</label>
-            {{ form.nombre }}
-            <div class="form-text">Máximo 100 caracteres</div>
+            <input type="text" name="nombre" class="form-control" id="id_nombre" placeholder="Nombre del usuario">
         </div>
         <div class="mb-3">
             <label for="id_correo" class="form-label">Correo Electrónico</label>
-            {{ form.correo }}
-            <div class="form-text">Debe ser un correo válido.</div>
+            <input type="email" name="correo" class="form-control" id="id_correo" placeholder="usuario@example.com">
         </div>
         <div class="mb-3">
             <label for="id_direccion" class="form-label">Dirección</label>
-            {{ form.direccion }}
+            <input type="text" name="direccion" class="form-control" id="id_direccion" placeholder="Dirección completa">
         </div>
         <div class="mb-3">
             <label for="id_tipo_usuario" class="form-label">Tipo de Usuario</label>
-            {{ form.tipo_usuario }}
+            <select name="tipo_usuario" class="form-select" id="id_tipo_usuario">
+                <option value="admin">Administrador</option>
+                <option value="client">Cliente</option>
+            </select>
         </div>
         <div class="mb-3">
             <label for="id_telefono" class="form-label">Teléfono</label>
-            {{ form.telefono }}
+            <input type="text" name="telefono" class="form-control" id="id_telefono" placeholder="Número de teléfono">
         </div>
         <div class="mb-3">
             <label for="id_productos_favoritos" class="form-label">Productos Favoritos</label>
-            {{ form.productos_favoritos }}
-            <div class="form-text">Selecciona uno o más productos.</div>
+            <input type="checkbox" name="productos_favoritos" class="form-check-input" id="id_productos_favoritos">
         </div>
         <button type="submit" class="btn btn-primary">Crear Usuario</button>
     </form>

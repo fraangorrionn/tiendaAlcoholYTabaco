@@ -27,5 +27,11 @@ urlpatterns = [
     path('productos/buscar/<str:nombre>/', views.buscar_producto, name='buscar_producto'),
     path('productos/<int:producto_id>/', views.detalle_producto, name='detalle_producto'),
     path('productos/buscar/', views.buscar_productos_por_nombre_o_tipo, name='buscar_productos_por_nombre_o_tipo'),
+    
+    #Formularios
+    path('formularios/crear/', views.crear_usuario, name='crear_usuario'),
+    path('formularios/', views.leer_usuarios, name='leer_usuarios'),
+    path('formularios/editar/<int:pk>/', views.editar_usuario, name='editar_usuario'),
+    path('formularios/eliminar/<int:pk>/', views.eliminar_usuario, name='eliminar_usuario'),
 
 ]

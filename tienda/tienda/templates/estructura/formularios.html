@@ -1,0 +1,11 @@
+{% load static %}
+<div class="dropdown">
+    <button class="dropbtn" id="formularioButton">
+        <i class="fa-solid fa-bars"></i> Formulario
+    </button>
+    <ul class="dropdown-content" id="formularioDropdown">
+        <li><a href="{% url 'index' %}"><i class="fa-solid fa-house"></i> Inicio</a></li>
+        <li><a href="{% url 'crear_usuario' %}"><i class="fa-solid fa-user"></i> Crear usuario</a></li>
+        <li><a href="{% url 'leer_usuarios' %}"><i class="fa-solid fa-box"></i> Leer usuario</a></li>
+    </ul>
+</div>

@@ -1,0 +1,63 @@
+{% extends 'principal.html' %}
+
+{% block title %}Lista de Categorías{% endblock %}
+
+{% block contenido %}
+<div class="container mt-5">
+    <h1>Lista de Categorías</h1>
+
+    <!-- Formulario de búsqueda avanzada -->
+    <form method="get" class="row mb-4">
+        <div class="col-md-3">
+            <input type="text" name="nombre" value="{{ filtros.nombre }}" class="form-control" placeholder="Buscar por nombre">
+        </div>
+        <div class="col-md-3">
+            <select name="estado" class="form-select">
+                <option value="">Todos los estados</option>
+                <option value="activo" {% if filtros.estado == 'activo' %}selected{% endif %}>Activo</option>
+                <option value="inactivo" {% if filtros.estado == 'inactivo' %}selected{% endif %}>Inactivo</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <input type="number" name="prioridad_min" value="{{ filtros.prioridad_min }}" class="form-control" placeholder="Prioridad mínima">
+        </div>
+        <div class="col-md-2">
+            <input type="number" name="prioridad_max" value="{{ filtros.prioridad_max }}" class="form-control" placeholder="Prioridad máxima">
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100">Buscar</button>
+        </div>
+    </form>
+
+    <!-- Tabla de categorías -->
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th>Fecha de Creación</th>
+                <th>Estado</th>
+                <th>Prioridad</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for categoria in categorias %}
+            <tr>
+                <td>{{ categoria.nombre }}</td>
+                <td>{{ categoria.descripcion }}</td>
+                <td>{{ categoria.fecha_creacion }}</td>
+                <td>{{ categoria.estado }}</td>
+                <td>{{ categoria.prioridad }}</td>
+                <td>
+                    <a href="{% url 'editar_categoria' categoria.pk %}" class="btn btn-warning btn-sm">Editar</a>
+                    <a href="{% url 'eliminar_categoria' categoria.pk %}" class="btn btn-danger btn-sm">Eliminar</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{% url 'crear_categoria' %}" class="btn btn-primary">Crear Categoría</a>
+</div>
+{% endblock %}
+

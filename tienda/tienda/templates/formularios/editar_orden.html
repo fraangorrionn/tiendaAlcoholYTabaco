@@ -1,0 +1,15 @@
+{% extends 'principal.html' %}
+
+{% block title %}Editar Orden{% endblock %}
+
+{% block contenido %}
+<div class="container mt-5">
+    <h1>Editar Orden</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ formulario.as_p }}
+        <button type="submit" class="btn btn-success">Actualizar Orden</button>
+    </form>
+    <a href="{% url 'lista_ordenes' %}" class="btn btn-secondary mt-3">Volver a la lista</a>
+</div>
+{% endblock %}

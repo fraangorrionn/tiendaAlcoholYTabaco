@@ -1,11 +1,35 @@
 {% load static %}
 <div class="dropdown">
     <button class="dropbtn" id="formularioButton">
-        <i class="fa-solid fa-bars"></i> Formulario
+        <i class="fa-solid fa-bars"></i> Formularios
     </button>
     <ul class="dropdown-content" id="formularioDropdown">
+        <!-- Opciones generales -->
         <li><a href="{% url 'index' %}"><i class="fa-solid fa-house"></i> Inicio</a></li>
-        <li><a href="{% url 'crear_usuario' %}"><i class="fa-solid fa-user"></i> Crear usuario</a></li>
-        <li><a href="{% url 'leer_usuarios' %}"><i class="fa-solid fa-box"></i> Leer usuario</a></li>
-    </ul>
+        
+        <!-- Opciones relacionadas con Usuarios -->
+        <li><a href="{% url 'crear_usuario' %}"><i class="fa-solid fa-user-plus"></i> Crear Usuario</a></li>
+        <li><a href="{% url 'leer_usuarios' %}"><i class="fa-solid fa-users"></i> Lista de Usuarios</a></li>
+        
+        <!-- Opciones relacionadas con Órdenes -->
+        <li><a href="{% url 'crear_orden' %}"><i class="fa-solid fa-file-invoice"></i> Crear Orden</a></li>
+        <li><a href="{% url 'leer_ordenes' %}"><i class="fa-solid fa-list"></i> Lista de Órdenes</a></li>
+        
+        <!-- Opciones relacionadas con Proveedores -->
+        <li><a href="{% url 'crear_provedor' %}"><i class="fa-solid fa-truck"></i> Crear Proveedor</a></li>
+        <li><a href="{% url 'leer_proveedores' %}"><i class="fa-solid fa-clipboard-list"></i> Lista de Proveedores</a></li>
+
+         <!-- Opciones relacionadas con Inventarios -->
+         <li><a href="{% url 'crear_inventario' %}"><i class="fa-solid fa-boxes-stacked"></i> Crear Inventario</a></li>
+         <li><a href="{% url 'leer_inventarios' %}"><i class="fa-solid fa-warehouse"></i> Lista de Inventarios</a></li>
+
+         <!-- Opciones relacionadas con Tarjetas -->
+        <li><a href="{% url 'crear_tarjeta' %}"><i class="fa-solid fa-credit-card"></i> Crear Tarjeta</a></li>
+        <li><a href="{% url 'leer_tarjetas' %}"><i class="fa-solid fa-address-card"></i> Lista de Tarjetas</a></li>
+
+        <!-- Opciones relacionadas con Categorías -->
+        <li><a href="{% url 'crear_categoria' %}"><i class="fa-solid fa-tag"></i> Crear Categoría</a></li>
+        <li><a href="{% url 'leer_categorias' %}"><i class="fa-solid fa-tags"></i> Lista de Categorías</a></li>
+     </ul>
 </div>
+

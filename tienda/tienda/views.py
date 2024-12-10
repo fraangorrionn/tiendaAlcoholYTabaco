@@ -175,8 +175,30 @@ def crear_usuario(request):
 
 # Leer la lista de usuarios
 def leer_usuarios(request):
+    # Obtén todos los usuarios inicialmente
     usuarios = Usuario.objects.all()
-    return render(request, 'formularios/leer_usuarios.html', {"usuarios": usuarios})
+
+    # Obtener valores del formulario GET
+    nombre = request.GET.get('nombre', '')
+    tipo_usuario = request.GET.get('tipo_usuario', '')
+    direccion = request.GET.get('direccion', '')
+
+    # Filtrar usuarios según los criterios
+    if nombre:
+        usuarios = usuarios.filter(nombre__icontains=nombre)
+    if tipo_usuario:
+        usuarios = usuarios.filter(tipo_usuario=tipo_usuario)
+    if direccion:
+        usuarios = usuarios.filter(direccion__icontains=direccion)
+
+    return render(request, 'formularios/leer_usuarios.html', {
+        "usuarios": usuarios,
+        "filtros": {
+            "nombre": nombre,
+            "tipo_usuario": tipo_usuario,
+            "direccion": direccion,
+        }
+    })
 
 # Actualizar un usuario existente
 def editar_usuario(request, pk):
@@ -204,6 +226,267 @@ def eliminar_usuario(request, pk):
         return redirect("lista_usuarios")
     return render(request, 'formularios/eliminar_usuario.html', {"usuario": usuario})
 
+def crear_orden(request):
+    formulario = OrdenModelForm(request.POST or None)
+    if formulario.is_valid():
+        formulario.save()
+        return redirect('lista_ordenes')
+    return render(request, 'formularios/crear_orden.html', {'formulario': formulario})
+
+def leer_ordenes(request):
+    ordenes = Orden.objects.select_related('usuario').all()
+
+    # Obtener valores del formulario
+    estado = request.GET.get('estado', '')
+    usuario = request.GET.get('usuario', '')
+    total_min = request.GET.get('total_min', None)
+    total_max = request.GET.get('total_max', None)
+
+    # Aplicar filtros
+    if estado:
+        ordenes = ordenes.filter(estado=estado)
+    if usuario:
+        ordenes = ordenes.filter(usuario__id=usuario)
+    if total_min:
+        ordenes = ordenes.filter(total__gte=total_min)
+    if total_max:
+        ordenes = ordenes.filter(total__lte=total_max)
+
+    # Obtener usuarios para el formulario
+    usuarios = Usuario.objects.all()
+
+    return render(request, 'formularios/leer_ordenes.html', {
+        "ordenes": ordenes,
+        "usuarios": usuarios,
+        "filtros": {
+            "estado": estado,
+            "usuario": usuario,
+            "total_min": total_min,
+            "total_max": total_max,
+        }
+    })
+
+def editar_orden(request, pk):
+    orden = get_object_or_404(Orden, pk=pk)
+    formulario = OrdenModelForm(request.POST or None, instance=orden)
+    if formulario.is_valid():
+        formulario.save()
+        return redirect('lista_ordenes')
+    return render(request, 'formularios/editar_orden.html', {'formulario': formulario, 'orden': orden})
+
+def eliminar_orden(request, pk):
+    orden = get_object_or_404(Orden, pk=pk)
+    if request.method == 'POST':
+        orden.delete()
+        return redirect('lista_ordenes')
+    return render(request, 'formularios/eliminar_orden.html', {'orden': orden})
+
+def crear_provedor(request):
+    formulario = ProvedorModelForm(request.POST or None)
+    if formulario.is_valid():
+        formulario.save()
+        return redirect('lista_proveedores')
+    return render(request, 'formularios/crear_provedor.html', {'formulario': formulario})
+
+def leer_provedores(request):
+    provedores = Provedor.objects.all()
+
+    # Obtener valores de los filtros del formulario
+    nombre = request.GET.get('nombre', '')
+    contacto = request.GET.get('contacto', '')
+    telefono = request.GET.get('telefono', '')
+
+    # Aplicar filtros
+    if nombre:
+        provedores = provedores.filter(nombre__icontains=nombre)
+    if contacto:
+        provedores = provedores.filter(contacto__icontains=contacto)
+    if telefono:
+        provedores = provedores.filter(telefono__icontains=telefono)
+
+    return render(request, 'formularios/leer_proveedores.html', {
+        "provedores": provedores,
+        "filtros": {
+            "nombre": nombre,
+            "contacto": contacto,
+            "telefono": telefono,
+        }
+    })
+
+
+def editar_provedor(request, pk):
+    provedor = get_object_or_404(Provedor, pk=pk)
+    formulario = ProvedorModelForm(request.POST or None, instance=provedor)
+    if formulario.is_valid():
+        formulario.save()
+        return redirect('lista_proveedores')
+    return render(request, 'formularios/editar_provedor.html', {'formulario': formulario, 'provedor': provedor})
+
+def eliminar_provedor(request, pk):
+    provedor = get_object_or_404(Provedor, pk=pk)
+    if request.method == 'POST':
+        provedor.delete()
+        return redirect('lista_proveedores')
+    return render(request, 'formularios/eliminar_provedor.html', {'provedor': provedor})
+
+def crear_inventario(request):
+    formulario = InventarioModelForm(request.POST or None)
+    if formulario.is_valid():
+        formulario.save()
+        return redirect('lista_inventarios')
+    return render(request, 'formularios/crear_inventario.html', {'formulario': formulario})
+
+def leer_inventarios(request):
+    inventarios = Inventario.objects.select_related('producto').all()
+
+    # Obtener valores de los filtros del formulario
+    producto = request.GET.get('producto', '')
+    ubicacion = request.GET.get('ubicacion', '')
+    cantidad_min = request.GET.get('cantidad_min', None)
+    cantidad_max = request.GET.get('cantidad_max', None)
+
+    # Aplicar filtros
+    if producto:
+        inventarios = inventarios.filter(producto__nombre__icontains=producto)
+    if ubicacion:
+        inventarios = inventarios.filter(ubicacion__icontains=ubicacion)
+    if cantidad_min:
+        inventarios = inventarios.filter(cantidad_disponible__gte=cantidad_min)
+    if cantidad_max:
+        inventarios = inventarios.filter(cantidad_disponible__lte=cantidad_max)
+
+    return render(request, 'formularios/leer_inventarios.html', {
+        "inventarios": inventarios,
+        "filtros": {
+            "producto": producto,
+            "ubicacion": ubicacion,
+            "cantidad_min": cantidad_min,
+            "cantidad_max": cantidad_max,
+        }
+    })
+
+
+def editar_inventario(request, pk):
+    inventario = get_object_or_404(Inventario, pk=pk)
+    formulario = InventarioModelForm(request.POST or None, instance=inventario)
+    if formulario.is_valid():
+        formulario.save()
+        return redirect('lista_inventarios')
+    return render(request, 'formularios/editar_inventario.html', {'formulario': formulario, 'inventario': inventario})
+
+def eliminar_inventario(request, pk):
+    inventario = get_object_or_404(Inventario, pk=pk)
+    if request.method == 'POST':
+        inventario.delete()
+        return redirect('lista_inventarios')
+    return render(request, 'formularios/eliminar_inventario.html', {'inventario': inventario})
+
+def crear_tarjeta(request):
+    formulario = TarjetaModelForm(request.POST or None)
+    if formulario.is_valid():
+        formulario.save()
+        return redirect('lista_tarjetas')
+    return render(request, 'formularios/crear_tarjeta.html', {'formulario': formulario})
+
+def leer_tarjetas(request):
+    tarjetas = Tarjeta.objects.select_related('usuario').all()
+
+    # Obtener valores de los filtros del formulario
+    usuario = request.GET.get('usuario', '')
+    tipo = request.GET.get('tipo', '')
+    fecha_inicio = request.GET.get('fecha_inicio', None)
+    fecha_fin = request.GET.get('fecha_fin', None)
+
+    # Aplicar filtros
+    if usuario:
+        tarjetas = tarjetas.filter(usuario__nombre__icontains=usuario)
+    if tipo:
+        tarjetas = tarjetas.filter(tipo__icontains=tipo)
+    if fecha_inicio:
+        tarjetas = tarjetas.filter(fecha_expiracion__gte=fecha_inicio)
+    if fecha_fin:
+        tarjetas = tarjetas.filter(fecha_expiracion__lte=fecha_fin)
+
+    return render(request, 'formularios/leer_tarjetas.html', {
+        "tarjetas": tarjetas,
+        "filtros": {
+            "usuario": usuario,
+            "tipo": tipo,
+            "fecha_inicio": fecha_inicio,
+            "fecha_fin": fecha_fin,
+        }
+    })
+
+def editar_tarjeta(request, pk):
+    tarjeta = get_object_or_404(Tarjeta, pk=pk)
+    formulario = TarjetaModelForm(request.POST or None, instance=tarjeta)
+    if formulario.is_valid():
+        formulario.save()
+        return redirect('lista_tarjetas')
+    return render(request, 'formularios/editar_tarjeta.html', {'formulario': formulario, 'tarjeta': tarjeta})
+
+def eliminar_tarjeta(request, pk):
+    tarjeta = get_object_or_404(Tarjeta, pk=pk)
+    if request.method == 'POST':
+        tarjeta.delete()
+        return redirect('lista_tarjetas')
+    return render(request, 'formularios/eliminar_tarjeta.html', {'tarjeta': tarjeta})
+
+# Crear categoría
+def crear_categoria(request):
+    formulario = CategoriaModelForm(request.POST or None)
+    if formulario.is_valid():
+        formulario.save()
+        return redirect('leer_categorias')
+    return render(request, 'formularios/crear_categoria.html', {'formulario': formulario})
+
+# Leer categorías
+def leer_categorias(request):
+    categorias = Categoria.objects.all()
+
+    # Filtros de búsqueda
+    nombre = request.GET.get('nombre', '')
+    estado = request.GET.get('estado', '')
+    prioridad_min = request.GET.get('prioridad_min', None)
+    prioridad_max = request.GET.get('prioridad_max', None)
+
+    # Aplicar filtros si están presentes
+    if nombre:
+        categorias = categorias.filter(nombre__icontains=nombre)
+    if estado:
+        categorias = categorias.filter(estado=estado)
+    if prioridad_min:
+        categorias = categorias.filter(prioridad__gte=prioridad_min)
+    if prioridad_max:
+        categorias = categorias.filter(prioridad__lte=prioridad_max)
+
+    return render(request, 'formularios/leer_categorias.html', {
+        'categorias': categorias,
+        'filtros': {
+            'nombre': nombre,
+            'estado': estado,
+            'prioridad_min': prioridad_min,
+            'prioridad_max': prioridad_max,
+        }
+    })
+
+
+# Editar categoría
+def editar_categoria(request, pk):
+    categoria = get_object_or_404(Categoria, pk=pk)
+    formulario = CategoriaModelForm(request.POST or None, instance=categoria)
+    if formulario.is_valid():
+        formulario.save()
+        return redirect('leer_categorias')
+    return render(request, 'formularios/editar_categoria.html', {'formulario': formulario, 'categoria': categoria})
+
+# Eliminar categoría
+def eliminar_categoria(request, pk):
+    categoria = get_object_or_404(Categoria, pk=pk)
+    if request.method == 'POST':
+        categoria.delete()
+        return redirect('leer_categorias')
+    return render(request, 'formularios/eliminar_categoria.html', {'categoria': categoria})
 
 # Errores
 def handler_404(request, exception):

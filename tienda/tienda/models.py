@@ -24,7 +24,7 @@ class Producto(models.Model):
     tipo = models.CharField(max_length=20, choices=TIPO_PRODUCTO, default='vino')
     stock = models.IntegerField(default=0)
     descripcion = models.TextField(blank=True)
-    tiempo_estimado_envio = models.TimeField(blank=True, null=True)  # Nuevo campo TimeField
+    tiempo_estimado_envio = models.TimeField(blank=True, null=True)
     categorias = models.ManyToManyField('Categoria', through='ProductoCategoria', related_name='productos')
 
 

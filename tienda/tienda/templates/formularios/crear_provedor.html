@@ -1,0 +1,14 @@
+{% extends 'principal.html' %}
+
+{% block title %}Crear Proveedor{% endblock %}
+
+{% block contenido %}
+<div class="container mt-5">
+    <h1>Crear Proveedor</h1>
+    <form method="post" class="needs-validation" novalidate>
+        {% csrf_token %}
+        {{ formulario.as_p }}
+        <button type="submit" class="btn btn-primary">Crear Proveedor</button>
+    </form>
+</div>
+{% endblock %}

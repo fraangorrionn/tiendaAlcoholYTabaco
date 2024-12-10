@@ -1,0 +1,14 @@
+{% extends 'principal.html' %}
+
+{% block title %}Crear Orden{% endblock %}
+
+{% block contenido %}
+<div class="container mt-5">
+    <h1>Crear Orden</h1>
+    <form method="post" class="needs-validation" novalidate>
+        {% csrf_token %}
+        {{ formulario.as_p }}
+        <button type="submit" class="btn btn-primary">Crear Orden</button>
+    </form>
+</div>
+{% endblock %}

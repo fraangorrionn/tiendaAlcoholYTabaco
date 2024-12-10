@@ -1,0 +1,59 @@
+{% extends 'principal.html' %}
+
+{% block title %}Lista de Inventarios{% endblock %}
+
+{% block contenido %}
+<div class="container mt-5">
+    <h1>Lista de Inventarios</h1>
+
+    <!-- Formulario de búsqueda avanzada -->
+    <form method="get" class="row mb-4">
+        <div class="col-md-4">
+            <input type="text" name="producto" value="{{ filtros.producto }}" class="form-control" placeholder="Buscar por producto">
+        </div>
+        <div class="col-md-4">
+            <input type="text" name="ubicacion" value="{{ filtros.ubicacion }}" class="form-control" placeholder="Buscar por ubicación">
+        </div>
+        <div class="col-md-2">
+            <input type="number" name="cantidad_min" value="{{ filtros.cantidad_min }}" class="form-control" placeholder="Cantidad mínima">
+        </div>
+        <div class="col-md-2">
+            <input type="number" name="cantidad_max" value="{{ filtros.cantidad_max }}" class="form-control" placeholder="Cantidad máxima">
+        </div>
+        <div class="col-md-12 mt-3">
+            <button type="submit" class="btn btn-primary">Buscar</button>
+        </div>
+    </form>
+
+    <!-- Tabla de resultados -->
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Cantidad Disponible</th>
+                <th>Ubicación</th>
+                <th>Mínimo Requerido</th>
+                <th>Última Actualización</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for inventario in inventarios %}
+            <tr>
+                <td>{{ inventario.producto.nombre }}</td>
+                <td>{{ inventario.cantidad_disponible }}</td>
+                <td>{{ inventario.ubicacion }}</td>
+                <td>{{ inventario.minimo_requerido }}</td>
+                <td>{{ inventario.fecha_actualizacion }}</td>
+                <td>
+                    <a href="{% url 'editar_inventario' inventario.pk %}" class="btn btn-warning btn-sm">Editar</a>
+                    <a href="{% url 'eliminar_inventario' inventario.pk %}" class="btn btn-danger btn-sm">Eliminar</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{% url 'crear_inventario' %}" class="btn btn-primary">Crear Inventario</a>
+</div>
+{% endblock %}
+

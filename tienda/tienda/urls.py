@@ -28,10 +28,41 @@ urlpatterns = [
     path('productos/<int:producto_id>/', views.detalle_producto, name='detalle_producto'),
     path('productos/buscar/', views.buscar_productos_por_nombre_o_tipo, name='buscar_productos_por_nombre_o_tipo'),
     
-    #Formularios
-    path('formularios/crear/', views.crear_usuario, name='crear_usuario'),
-    path('formularios/', views.leer_usuarios, name='leer_usuarios'),
-    path('formularios/editar/<int:pk>/', views.editar_usuario, name='editar_usuario'),
-    path('formularios/eliminar/<int:pk>/', views.eliminar_usuario, name='eliminar_usuario'),
+    # Formularios - Usuarios
+    path('usuarios/crear_usuario/', views.crear_usuario, name='crear_usuario'),
+    path('usuarios/leer_usuarios/', views.leer_usuarios, name='leer_usuarios'),
+    path('usuarios/editar_usuario/<int:pk>/', views.editar_usuario, name='editar_usuario'),
+    path('usuarios/eliminar_usuario/<int:pk>/', views.eliminar_usuario, name='eliminar_usuario'),
+    
+    # Formularios - Ordenes
+    path('ordenes/crear_orden/', views.crear_orden, name='crear_orden'),
+    path('ordenes/leer_ordenes/', views.leer_ordenes, name='leer_ordenes'),
+    path('ordenes/editar_orden/<int:pk>/', views.editar_orden, name='editar_orden'),
+    path('ordenes/eliminar_orden/<int:pk>/', views.eliminar_orden, name='eliminar_orden'),
+    
+    # Formularios - Proveedores
+    path('provedores/crear_provedor/', views.crear_provedor, name='crear_provedor'),
+    path('provedores/leer_proveedores/', views.leer_provedores, name='leer_proveedores'),
+    path('provedores/editar_provedor/<int:pk>/', views.editar_provedor, name='editar_provedor'),
+    path('provedores/eliminar_provedor/<int:pk>/', views.eliminar_provedor, name='eliminar_provedor'),
+    
+    # Formularios - Inventarios
+    path('inventarios/crear_inventario/', views.crear_inventario, name='crear_inventario'),
+    path('inventarios/leer_inventarios/', views.leer_inventarios, name='leer_inventarios'),
+    path('inventarios/editar_inventario/<int:pk>/', views.editar_inventario, name='editar_inventario'),
+    path('inventarios/eliminar_inventario/<int:pk>/', views.eliminar_inventario, name='eliminar_inventario'),
+    
+    # Formularios - Tarjetas
+    path('tarjetas/crear_tarjeta/', views.crear_tarjeta, name='crear_tarjeta'),
+    path('tarjetas/leer_tarjetas/', views.leer_tarjetas, name='leer_tarjetas'),
+    path('tarjetas/editar_tarjeta/<int:pk>/', views.editar_tarjeta, name='editar_tarjeta'),
+    path('tarjetas/eliminar_tarjeta/<int:pk>/', views.eliminar_tarjeta, name='eliminar_tarjeta'),
+    
+    # Formularios - Categorías
+    path('categorias/crear_categoria/', views.crear_categoria, name='crear_categoria'),
+    path('categorias/leer_categorias/', views.leer_categorias, name='leer_categorias'),
+    path('categorias/editar_categoria/<int:pk>/', views.editar_categoria, name='editar_categoria'),
+    path('categorias/eliminar_categoria/<int:pk>/', views.eliminar_categoria, name='eliminar_categoria'),
+
 
 ]

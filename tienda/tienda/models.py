@@ -39,7 +39,10 @@ class Orden(models.Model):
     estado = models.CharField(max_length=20, choices=ESTADO_ORDEN)
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
     metodo_pago = models.CharField(max_length=50, blank=True)
+    archivo_adjunto = models.FileField(upload_to='ordenes_archivos/', null=True, blank=True)
 
+    def __str__(self):
+        return f"Orden {self.id} - {self.estado}"
 
 class DetalleOrden(models.Model):
     orden = models.ForeignKey(Orden, on_delete=models.CASCADE)

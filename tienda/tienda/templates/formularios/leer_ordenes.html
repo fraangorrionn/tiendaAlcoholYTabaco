@@ -43,6 +43,7 @@
                 <th>Total</th>
                 <th>Estado</th>
                 <th>Usuario</th>
+                <th>Archivo Adjunto</th> <!-- Nueva columna para archivo adjunto -->
                 <th>Acciones</th>
             </tr>
         </thead>
@@ -53,6 +54,16 @@
                 <td>{{ orden.total }}</td>
                 <td>{{ orden.estado }}</td>
                 <td>{{ orden.usuario.nombre }}</td>
+
+                <!-- Columna para mostrar el archivo adjunto -->
+                <td>
+                    {% if orden.archivo_adjunto %}
+                        <a href="{{ orden.archivo_adjunto.url }}" target="_blank">Ver Archivo</a>
+                    {% else %}
+                        No hay archivo
+                    {% endif %}
+                </td>
+
                 <td>
                     <a href="{% url 'editar_orden' orden.pk %}" class="btn btn-warning btn-sm">Editar</a>
                     <a href="{% url 'eliminar_orden' orden.pk %}" class="btn btn-danger btn-sm">Eliminar</a>

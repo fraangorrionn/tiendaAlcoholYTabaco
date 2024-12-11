@@ -350,6 +350,163 @@ Suma 10 unidades al precio del producto, simulando un cálculo de impuestos u ot
 Ejemplo de resultado:
 Si el precio es 100.00, el resultado será 110.00.
 
+# FORMULARIOS
+
+# Widgets utilizados en los formularios del proyecto
+1-forms.EmailInput:
+    Usado para campos de correo electrónico, como el correo en el formulario UsuarioModelForm y ProvedorModelForm.
+
+2-forms.Select:
+    Usado para desplegables con una sola selección, como tipo de usuario, estado de la orden, y usuario asociado en los formularios UsuarioModelForm, OrdenModelForm, y ProvedorModelForm.
+
+3-forms.NumberInput:
+    Usado para entradas de números, como total de la orden, cantidad disponible y mínimo requerido en los formularios OrdenModelForm e InventarioModelForm.
+
+4-forms.Textarea:
+    Usado para campos de texto largo, como descripción en el formulario CategoriaModelForm.
+
+5-forms.CheckboxSelectMultiple:
+    Usado para desplegables con selección múltiple, como productos favoritos en los formularios UsuarioModelForm y ProvedorModelForm.
+
+6-forms.ClearableFileInput:
+   Usado para permitir la carga de archivos en el formulario, como el campo archivo_adjunto** en el formulario OrdenModelForm.
+
+# Validaciones en Formularios
+
+# Validaciones en el Formulario de Usuario
+
+### **1. Validación del Nombre del Usuario:**
+- **Campo:** `nombre`
+- **Condición:** El nombre no debe exceder los **100 caracteres**.
+- **Validación:** Si el nombre es más largo de lo permitido, se generará un error.
+- **Mensaje de error:** `El nombre no debe exceder los 100 caracteres.`
+
+### **2. Validación del Correo Electrónico:**
+- **Campo:** `correo`
+- **Condición:** El correo debe tener un formato válido y ser único.
+- **Validación:** 
+  - Se verifica que el correo electrónico tenga un formato válido (ejemplo: `usuario@example.com`).
+  - Se valida que el correo no exista ya en la base de datos para evitar duplicados.
+- **Mensaje de error:** 
+  - `El correo electrónico no tiene un formato válido.`
+  - `Ya existe un usuario con este correo electrónico.`
+
+### **3. Validación del Teléfono:**
+- **Campo:** `telefono`
+- **Condición:** El teléfono debe tener entre **7 y 15 dígitos** y puede incluir un prefijo "+".
+- **Validación:** Si el teléfono no cumple con el formato esperado, se genera un error.
+- **Mensaje de error:** `El teléfono debe tener entre 7 y 15 dígitos y puede incluir un prefijo '+'.`
+
+
+## Formulario de **Orden**
+
+### **1. Validación de Total:**
+- **Campo:** `total`
+- **Condición:** El total debe ser un número mayor que **0**.
+- **Validación:** Si el valor es `0` o negativo, se mostrará un mensaje de error indicando que el total debe ser mayor a 0.
+- **Ejemplo de mensaje de error:** `El total debe ser mayor a 0.`
+
+### **2. Validación de Método de Pago:**
+- **Campo:** `metodo_pago`
+- **Condición:** El campo no puede estar vacío o contener solo espacios en blanco.
+- **Validación:** Si el campo no tiene un valor válido, se mostrará un mensaje de error.
+- **Ejemplo de mensaje de error:** `Debe especificar un método de pago.`
+
+### **3. Validación de Estado:**
+- **Campo:** `estado`
+- **Condición:** Si el estado es **"pendiente"**, el total no debe ser mayor a **1000**.
+- **Validación:** Si se intenta guardar una orden con el estado **pendiente** y un total superior a 1000, se muestra un mensaje de error.
+- **Ejemplo de mensaje de error:** `Las órdenes pendientes no pueden tener un total mayor a 1000.`
+
+# Validaciones en el Formulario de Proveedor
+
+### **1. Validación del Nombre del Proveedor:**
+- **Campo:** `nombre`
+- **Condición:** El nombre del proveedor debe ser único.
+- **Validación:** Si el nombre ingresado ya existe en la base de datos, se generará un error de validación.
+- **Mensaje de error:** `Ya existe un proveedor con este nombre.`
+
+### **2. Validación del Teléfono:**
+- **Campo:** `telefono`
+- **Condición:** El teléfono debe tener entre 7 y 15 dígitos y puede incluir un prefijo `+`.
+- **Validación:** Si el teléfono no sigue este formato, se generará un error.
+- **Mensaje de error:** `El teléfono debe tener entre 7 y 15 dígitos y puede incluir un prefijo '+'.`
+
+### **3. Validación del Correo Electrónico:**
+- **Campo:** `correo`
+- **Condición:** El correo electrónico debe ser único.
+- **Validación:** Si el correo electrónico ya está registrado en otro proveedor, se generará un error.
+- **Mensaje de error:** `Ya existe un proveedor con este correo electrónico.`
+
+### **4. Validación de Productos Asociados:**
+- **Campo:** `productos`
+- **Condición:** El proveedor debe tener al menos un producto asociado.
+- **Validación:** Si no se selecciona ningún producto, se generará un error.
+- **Mensaje de error:** `Debe seleccionar al menos un producto.`
+
+# Validaciones en el Formulario de Inventario
+
+### **1. Validación de `cantidad_disponible`:**
+- **Campo:** `cantidad_disponible`
+- **Condición:** La cantidad disponible debe ser mayor que **0**.
+- **Validación:** Si el valor es **0 o negativo**, se muestra un mensaje de error.
+- **Mensaje de error:** `La cantidad disponible debe ser mayor a 0.`
+
+### **2. Validación de `minimo_requerido`:**
+- **Campo:** `minimo_requerido`
+- **Condición:** El valor de `minimo_requerido` no puede ser mayor que la `cantidad_disponible`.
+- **Validación:** Si el mínimo requerido es mayor que la cantidad disponible, se muestra un mensaje de error.
+- **Mensaje de error:** `El mínimo requerido no puede ser mayor que la cantidad disponible.`
+
+# Validaciones en el Formulario de Tarjeta
+
+### **1. Validación del Número de Tarjeta:**
+- **Campo:** `numero_tarjeta`
+- **Condición:** El número de tarjeta debe tener exactamente **16 dígitos** y ser numérico.
+- **Validación:** Si el número de tarjeta no tiene 16 dígitos o contiene caracteres no numéricos, se genera un error de validación.
+- **Mensaje de error:** `El número de tarjeta debe tener exactamente 16 dígitos y solo contener números.`
+
+### **2. Validación de la Fecha de Expiración:**
+- **Campo:** `fecha_expiracion`
+- **Condición:** La fecha de expiración debe ser **posterior a la fecha actual**.
+- **Validación:** Si la fecha de expiración es anterior o igual a la fecha actual, se genera un error de validación.
+- **Mensaje de error:** `La tarjeta ha expirado. Debe tener una fecha posterior a hoy.`
+
+### **3. Validación del Código de Seguridad:**
+- **Campo:** `codigo_seguridad`
+- **Condición:** El código de seguridad debe tener **entre 3 y 4 dígitos**.
+- **Validación:** Si el código tiene menos de 3 o más de 4 dígitos, o contiene caracteres no numéricos, se genera un error de validación.
+- **Mensaje de error:** `El código de seguridad debe tener entre 3 y 4 dígitos.`
+
+# Validaciones en el Formulario de Categoría
+
+### **1. Validación del Nombre de la Categoría:**
+- **Campo:** `nombre`
+- **Condición:** El nombre debe ser único.
+- **Validación:** Si ya existe una categoría con el mismo nombre, se generará un error.
+- **Mensaje de error:** `Ya existe una categoría con este nombre.`
+
+### **2. Validación del Estado:**
+- **Campo:** `estado`
+- **Condición:** El estado debe ser **'activo'** o **'inactivo'**.
+- **Validación:** Si el estado no es uno de estos dos valores, se generará un error.
+- **Mensaje de error:** `El estado debe ser 'activo' o 'inactivo'.`
+
+### **3. Validación de la Prioridad:**
+- **Campo:** `prioridad`
+- **Condición:** La prioridad debe ser mayor que 0.
+- **Validación:** Si la prioridad es 0 o menor, se generará un error.
+- **Mensaje de error:** `La prioridad debe ser un número mayor que 0.`
+
+### PUNTO EXTRA- Permitir que en tu aplicación se incluyan imagenes o archivos y que se puedan ver
+
+Se añadió un campo FileField en el modelo orden para almacenar archivos adjuntos en la orden.
+Se actualizaron las migraciones para reflejar los cambios en la base de datos.
+Se modificó el formulario para permitir la carga de archivos.
+Se actualizó la vista para manejar archivos cargados usando request.FILES.
+Se configuraron las URLs y ajustes de MEDIA para servir los archivos subidos.
+
+
 ------Comando-------
 python3 -m venv myvenv
 source myvenv/bin/activate

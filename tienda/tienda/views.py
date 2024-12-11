@@ -202,35 +202,44 @@ def leer_usuarios(request):
 
 # Actualizar un usuario existente
 def editar_usuario(request, pk):
-    try:
-        usuario = Usuario.objects.get(pk=pk)  # Manejo manual de consulta
-    except Usuario.DoesNotExist:
-        return render(request, '404.html', status=404)  # Mostrar error 404 si no se encuentra
+    usuario = get_object_or_404(Usuario, pk=pk)  # Obtén el usuario o lanza un 404
 
-    formulario = UsuarioModelForm(request.POST or None, instance=usuario)
     if request.method == "POST":
+        formulario = UsuarioModelForm(request.POST, instance=usuario)
         if formulario.is_valid():
             formulario.save()
-            return redirect("lista_usuarios")
+            print(f"Usuario {usuario.nombre} actualizado correctamente.")  # Depuración
+            return redirect("leer_usuarios")  # Asegúrate de que esta URL esté definida
+        else:
+            print("Errores del formulario:", formulario.errors)  # Depuración
+    else:
+        formulario = UsuarioModelForm(instance=usuario)  # Carga el formulario con los datos existentes
+
     return render(request, 'formularios/editar_usuario.html', {"formulario": formulario, "usuario": usuario})
+
+
 
 # Eliminar un usuario
 def eliminar_usuario(request, pk):
-    try:
-        usuario = Usuario.objects.get(pk=pk)
-    except Usuario.DoesNotExist:
-        return render(request, '404.html', status=404)
+    usuario = get_object_or_404(Usuario, pk=pk)  # Obtén el usuario o lanza un 404
 
     if request.method == "POST":
         usuario.delete()
-        return redirect("lista_usuarios")
+        print(f"Usuario {usuario.nombre} eliminado correctamente.")  # Depuración
+        return redirect("leer_usuarios")  # Asegúrate de que esta URL esté definida
     return render(request, 'formularios/eliminar_usuario.html', {"usuario": usuario})
 
+
+
 def crear_orden(request):
-    formulario = OrdenModelForm(request.POST or None)
-    if formulario.is_valid():
-        formulario.save()
-        return redirect('lista_ordenes')
+    if request.method == "POST":
+        formulario = OrdenModelForm(request.POST, request.FILES)  # Incluir request.FILES para cargar imágenes o archivos
+        if formulario.is_valid():
+            formulario.save()  # Guardar la orden
+            return redirect('lista_ordenes')  # Redirige a la lista de órdenes
+    else:
+        formulario = OrdenModelForm()  # Si es un GET, muestra el formulario vacío
+
     return render(request, 'formularios/crear_orden.html', {'formulario': formulario})
 
 def leer_ordenes(request):

@@ -7,19 +7,9 @@
     <h1>Lista de Proveedores</h1>
 
     <!-- Formulario de búsqueda avanzada -->
-    <form method="get" class="row mb-4">
-        <div class="col-md-4">
-            <input type="text" name="nombre" value="{{ filtros.nombre }}" class="form-control" placeholder="Buscar por nombre">
-        </div>
-        <div class="col-md-4">
-            <input type="text" name="contacto" value="{{ filtros.contacto }}" class="form-control" placeholder="Buscar por contacto">
-        </div>
-        <div class="col-md-4">
-            <input type="text" name="telefono" value="{{ filtros.telefono }}" class="form-control" placeholder="Buscar por teléfono">
-        </div>
-        <div class="col-md-12 mt-3">
-            <button type="submit" class="btn btn-primary">Buscar</button>
-        </div>
+    <form method="get" class="mb-4">
+        {{ formulario.as_p }}
+        <button type="submit" class="btn btn-primary mt-3">Buscar</button>
     </form>
 
     <!-- Tabla de resultados -->
@@ -51,4 +41,5 @@
     <a href="{% url 'crear_provedor' %}" class="btn btn-primary">Crear Proveedor</a>
 </div>
 {% endblock %}
+
 

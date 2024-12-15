@@ -7,22 +7,9 @@
     <h1>Lista de Inventarios</h1>
 
     <!-- Formulario de búsqueda avanzada -->
-    <form method="get" class="row mb-4">
-        <div class="col-md-4">
-            <input type="text" name="producto" value="{{ filtros.producto }}" class="form-control" placeholder="Buscar por producto">
-        </div>
-        <div class="col-md-4">
-            <input type="text" name="ubicacion" value="{{ filtros.ubicacion }}" class="form-control" placeholder="Buscar por ubicación">
-        </div>
-        <div class="col-md-2">
-            <input type="number" name="cantidad_min" value="{{ filtros.cantidad_min }}" class="form-control" placeholder="Cantidad mínima">
-        </div>
-        <div class="col-md-2">
-            <input type="number" name="cantidad_max" value="{{ filtros.cantidad_max }}" class="form-control" placeholder="Cantidad máxima">
-        </div>
-        <div class="col-md-12 mt-3">
-            <button type="submit" class="btn btn-primary">Buscar</button>
-        </div>
+    <form method="get" class="mb-4">
+        {{ formulario.as_p }}
+        <button type="submit" class="btn btn-primary mt-3">Buscar</button>
     </form>
 
     <!-- Tabla de resultados -->
@@ -56,4 +43,5 @@
     <a href="{% url 'crear_inventario' %}" class="btn btn-primary">Crear Inventario</a>
 </div>
 {% endblock %}
+
 

@@ -7,23 +7,9 @@
     <h1>Lista de Usuarios</h1>
 
     <!-- Formulario de búsqueda avanzada -->
-    <form method="get" class="row mb-4">
-        <div class="col-md-4">
-            <input type="text" name="nombre" value="{{ filtros.nombre }}" class="form-control" placeholder="Buscar por nombre">
-        </div>
-        <div class="col-md-4">
-            <select name="tipo_usuario" class="form-select">
-                <option value="">Todos los tipos</option>
-                <option value="cliente" {% if filtros.tipo_usuario == 'cliente' %}selected{% endif %}>Cliente</option>
-                <option value="administrador" {% if filtros.tipo_usuario == 'administrador' %}selected{% endif %}>Administrador</option>
-            </select>
-        </div>
-        <div class="col-md-4">
-            <input type="text" name="direccion" value="{{ filtros.direccion }}" class="form-control" placeholder="Buscar por dirección">
-        </div>
-        <div class="col-md-12 mt-3">
-            <button type="submit" class="btn btn-primary">Buscar</button>
-        </div>
+    <form method="get" class="mb-4">
+        {{ formulario.as_p }}
+        <button type="submit" class="btn btn-primary mt-3">Buscar</button>
     </form>
 
     <!-- Tabla de resultados -->

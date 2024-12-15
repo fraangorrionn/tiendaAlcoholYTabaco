@@ -63,6 +63,43 @@ class UsuarioModelForm(forms.ModelForm):
         # Aquí puedes agregar validaciones adicionales si es necesario
         cleaned_data = super().clean()
         return cleaned_data
+    
+class BusquedaAvanzadaUsuarioForm(forms.Form):
+    nombre = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Buscar por nombre'})
+    )
+    tipo_usuario = forms.MultipleChoiceField(
+        choices=Usuario.TIPOS_USUARIO,
+        required=False,
+        widget=forms.CheckboxSelectMultiple()
+    )
+    direccion = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Buscar por dirección'})
+    )
+    
+    def clean(self):
+        # Lógica de validación personalizada
+        super().clean()
+        
+        # Obtener los datos del formulario
+        nombre = self.cleaned_data.get('nombre')
+        tipo_usuario = self.cleaned_data.get('tipo_usuario')
+        direccion = self.cleaned_data.get('direccion')
+        
+        # Validar que al menos uno de los campos tenga datos
+        if not nombre and not tipo_usuario and not direccion:
+            self.add_error('nombre', 'Debe introducir al menos un valor en un campo del formulario.')
+            self.add_error('tipo_usuario', 'Debe seleccionar al menos un tipo de usuario.')
+            self.add_error('direccion', 'Debe introducir al menos un valor en un campo del formulario.')
+        
+        # Validar que el nombre tenga al menos 3 caracteres si está presente
+        if nombre and len(nombre) < 3:
+            self.add_error('nombre', 'Debe introducir al menos 3 caracteres para el nombre.')
+        
+        # Siempre devolver los datos validados
+        return self.cleaned_data
         
 class OrdenModelForm(forms.ModelForm):
     class Meta:
@@ -106,6 +143,40 @@ class OrdenModelForm(forms.ModelForm):
 
         return cleaned_data
 
+class BusquedaAvanzadaOrdenForm(forms.Form):
+    estado = forms.ChoiceField(
+        choices=[('', 'Todos los estados')] + Orden.ESTADO_ORDEN,
+        required=False,
+        widget=forms.Select(attrs={'class': 'form-select'})
+    )
+    usuario = forms.ModelChoiceField(
+        queryset=Usuario.objects.all(),
+        required=False,
+        widget=forms.Select(attrs={'class': 'form-select'})
+    )
+    total_min = forms.DecimalField(
+        required=False,
+        min_value=0,
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Total mínimo'})
+    )
+    total_max = forms.DecimalField(
+        required=False,
+        min_value=0,
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Total máximo'})
+    )
+
+    def clean(self):
+        # Validaciones personalizadas
+        super().clean()
+        total_min = self.cleaned_data.get('total_min')
+        total_max = self.cleaned_data.get('total_max')
+
+        # Validar que total_max sea mayor que total_min si ambos están presentes
+        if total_min is not None and total_max is not None and total_max < total_min:
+            self.add_error('total_min', 'El total mínimo no puede ser mayor que el total máximo.')
+            self.add_error('total_max', 'El total máximo no puede ser menor que el total mínimo.')
+
+        return self.cleaned_data
 
 class ProvedorModelForm(forms.ModelForm):
     class Meta:
@@ -154,6 +225,32 @@ class ProvedorModelForm(forms.ModelForm):
 
         return cleaned_data
         
+class BusquedaAvanzadaProvedorForm(forms.Form):
+    nombre = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Buscar por nombre'})
+    )
+    contacto = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Buscar por contacto'})
+    )
+    telefono = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Buscar por teléfono'})
+    )
+
+    def clean(self):
+        # Validación personalizada para asegurar al menos un campo completado
+        super().clean()
+        nombre = self.cleaned_data.get('nombre')
+        contacto = self.cleaned_data.get('contacto')
+        telefono = self.cleaned_data.get('telefono')
+
+        if not nombre and not contacto and not telefono:
+            raise forms.ValidationError("Debe completar al menos un campo para realizar la búsqueda.")
+
+        return self.cleaned_data
+
 class InventarioModelForm(forms.ModelForm):
     class Meta:
         model = Inventario
@@ -198,6 +295,39 @@ class InventarioModelForm(forms.ModelForm):
                 self.add_error('minimo_requerido', 'El mínimo requerido no puede ser mayor que la cantidad disponible.')
 
         return cleaned_data
+    
+class BusquedaAvanzadaInventarioForm(forms.Form):
+    producto = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Buscar por producto'})
+    )
+    ubicacion = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Buscar por ubicación'})
+    )
+    cantidad_min = forms.IntegerField(
+        required=False,
+        min_value=0,
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Cantidad mínima'})
+    )
+    cantidad_max = forms.IntegerField(
+        required=False,
+        min_value=0,
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Cantidad máxima'})
+    )
+
+    def clean(self):
+        # Validación personalizada
+        super().clean()
+        cantidad_min = self.cleaned_data.get('cantidad_min')
+        cantidad_max = self.cleaned_data.get('cantidad_max')
+
+        # Validar que la cantidad máxima no sea menor que la cantidad mínima
+        if cantidad_min is not None and cantidad_max is not None and cantidad_max < cantidad_min:
+            self.add_error('cantidad_min', 'La cantidad mínima no puede ser mayor que la cantidad máxima.')
+            self.add_error('cantidad_max', 'La cantidad máxima no puede ser menor que la cantidad mínima.')
+
+        return self.cleaned_data
     
 class TarjetaModelForm(forms.ModelForm):
     class Meta:
@@ -249,6 +379,37 @@ class TarjetaModelForm(forms.ModelForm):
 
         return cleaned_data
         
+class BusquedaAvanzadaTarjetaForm(forms.Form):
+    usuario = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Buscar por usuario'})
+    )
+    tipo = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Buscar por tipo (crédito/débito)'})
+    )
+    fecha_inicio = forms.DateField(
+        required=False,
+        widget=forms.DateInput(attrs={'class': 'form-control', 'type': 'date', 'placeholder': 'Fecha desde'})
+    )
+    fecha_fin = forms.DateField(
+        required=False,
+        widget=forms.DateInput(attrs={'class': 'form-control', 'type': 'date', 'placeholder': 'Fecha hasta'})
+    )
+
+    def clean(self):
+        # Validaciones personalizadas
+        super().clean()
+        fecha_inicio = self.cleaned_data.get('fecha_inicio')
+        fecha_fin = self.cleaned_data.get('fecha_fin')
+
+        # Validar que la fecha fin no sea anterior a la fecha inicio
+        if fecha_inicio and fecha_fin and fecha_fin < fecha_inicio:
+            self.add_error('fecha_inicio', 'La fecha desde no puede ser mayor que la fecha hasta.')
+            self.add_error('fecha_fin', 'La fecha hasta no puede ser menor que la fecha desde.')
+
+        return self.cleaned_data
+        
 class CategoriaModelForm(forms.ModelForm):
     class Meta:
         model = Categoria
@@ -290,3 +451,36 @@ class CategoriaModelForm(forms.ModelForm):
         cleaned_data = super().clean()
         # Validación adicional si es necesario
         return cleaned_data
+    
+class BusquedaAvanzadaCategoriaForm(forms.Form):
+    nombre = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Buscar por nombre'})
+    )
+    estado = forms.ChoiceField(
+        choices=[('', 'Todos los estados'), ('activo', 'Activo'), ('inactivo', 'Inactivo')],
+        required=False,
+        widget=forms.Select(attrs={'class': 'form-select'})
+    )
+    prioridad_min = forms.IntegerField(
+        required=False,
+        min_value=0,
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Prioridad mínima'})
+    )
+    prioridad_max = forms.IntegerField(
+        required=False,
+        min_value=0,
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Prioridad máxima'})
+    )
+
+    def clean(self):
+        super().clean()
+        prioridad_min = self.cleaned_data.get('prioridad_min')
+        prioridad_max = self.cleaned_data.get('prioridad_max')
+
+        # Validar que la prioridad máxima no sea menor que la prioridad mínima
+        if prioridad_min is not None and prioridad_max is not None and prioridad_max < prioridad_min:
+            self.add_error('prioridad_min', 'La prioridad mínima no puede ser mayor que la prioridad máxima.')
+            self.add_error('prioridad_max', 'La prioridad máxima no puede ser menor que la prioridad mínima.')
+
+        return self.cleaned_data

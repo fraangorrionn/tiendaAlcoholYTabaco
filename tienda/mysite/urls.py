@@ -16,6 +16,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -29,3 +31,8 @@ handler404 = 'tienda.views.handler_404'
 handler500 = 'tienda.views.handler_500'
 handler403 = 'tienda.views.handler_403'
 handler400 = 'tienda.views.handler_400'
+
+# Configuración para servir archivos multimedia en modo desarrollo
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+

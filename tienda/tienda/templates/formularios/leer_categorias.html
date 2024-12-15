@@ -7,26 +7,9 @@
     <h1>Lista de Categorías</h1>
 
     <!-- Formulario de búsqueda avanzada -->
-    <form method="get" class="row mb-4">
-        <div class="col-md-3">
-            <input type="text" name="nombre" value="{{ filtros.nombre }}" class="form-control" placeholder="Buscar por nombre">
-        </div>
-        <div class="col-md-3">
-            <select name="estado" class="form-select">
-                <option value="">Todos los estados</option>
-                <option value="activo" {% if filtros.estado == 'activo' %}selected{% endif %}>Activo</option>
-                <option value="inactivo" {% if filtros.estado == 'inactivo' %}selected{% endif %}>Inactivo</option>
-            </select>
-        </div>
-        <div class="col-md-2">
-            <input type="number" name="prioridad_min" value="{{ filtros.prioridad_min }}" class="form-control" placeholder="Prioridad mínima">
-        </div>
-        <div class="col-md-2">
-            <input type="number" name="prioridad_max" value="{{ filtros.prioridad_max }}" class="form-control" placeholder="Prioridad máxima">
-        </div>
-        <div class="col-md-2">
-            <button type="submit" class="btn btn-primary w-100">Buscar</button>
-        </div>
+    <form method="get" class="mb-4">
+        {{ formulario.as_p }}
+        <button type="submit" class="btn btn-primary mt-3">Buscar</button>
     </form>
 
     <!-- Tabla de categorías -->

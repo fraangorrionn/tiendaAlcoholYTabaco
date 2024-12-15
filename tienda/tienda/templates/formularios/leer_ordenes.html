@@ -7,32 +7,9 @@
     <h1>Lista de Órdenes</h1>
 
     <!-- Formulario de búsqueda avanzada -->
-    <form method="get" class="row mb-4">
-        <div class="col-md-3">
-            <select name="estado" class="form-select">
-                <option value="">Todos los estados</option>
-                <option value="completada" {% if filtros.estado == 'completada' %}selected{% endif %}>Completada</option>
-                <option value="pendiente" {% if filtros.estado == 'pendiente' %}selected{% endif %}>Pendiente</option>
-                <option value="cancelada" {% if filtros.estado == 'cancelada' %}selected{% endif %}>Cancelada</option>
-            </select>
-        </div>
-        <div class="col-md-3">
-            <select name="usuario" class="form-select">
-                <option value="">Todos los usuarios</option>
-                {% for usuario in usuarios %}
-                <option value="{{ usuario.id }}" {% if filtros.usuario == usuario.id|stringformat:"s" %}selected{% endif %}>{{ usuario.nombre }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <div class="col-md-2">
-            <input type="number" name="total_min" value="{{ filtros.total_min }}" class="form-control" placeholder="Total mínimo">
-        </div>
-        <div class="col-md-2">
-            <input type="number" name="total_max" value="{{ filtros.total_max }}" class="form-control" placeholder="Total máximo">
-        </div>
-        <div class="col-md-2">
-            <button type="submit" class="btn btn-primary w-100">Buscar</button>
-        </div>
+    <form method="get" class="mb-4">
+        {{ formulario.as_p }}
+        <button type="submit" class="btn btn-primary mt-3">Buscar</button>
     </form>
 
     <!-- Tabla de resultados -->
@@ -43,7 +20,7 @@
                 <th>Total</th>
                 <th>Estado</th>
                 <th>Usuario</th>
-                <th>Archivo Adjunto</th> <!-- Nueva columna para archivo adjunto -->
+                <th>Archivo Adjunto</th>
                 <th>Acciones</th>
             </tr>
         </thead>
@@ -54,8 +31,6 @@
                 <td>{{ orden.total }}</td>
                 <td>{{ orden.estado }}</td>
                 <td>{{ orden.usuario.nombre }}</td>
-
-                <!-- Columna para mostrar el archivo adjunto -->
                 <td>
                     {% if orden.archivo_adjunto %}
                         <a href="{{ orden.archivo_adjunto.url }}" target="_blank">Ver Archivo</a>
@@ -63,7 +38,6 @@
                         No hay archivo
                     {% endif %}
                 </td>
-
                 <td>
                     <a href="{% url 'editar_orden' orden.pk %}" class="btn btn-warning btn-sm">Editar</a>
                     <a href="{% url 'eliminar_orden' orden.pk %}" class="btn btn-danger btn-sm">Eliminar</a>
@@ -72,6 +46,7 @@
             {% endfor %}
         </tbody>
     </table>
+
     <a href="{% url 'crear_orden' %}" class="btn btn-primary">Crear Orden</a>
 </div>
 {% endblock %}

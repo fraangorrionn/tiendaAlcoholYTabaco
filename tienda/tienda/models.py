@@ -1,15 +1,21 @@
 from django.db import models
 from django.utils import timezone
+from django.contrib.auth.models import AbstractUser
 
 class Usuario(models.Model):
-    TIPOS_USUARIO = [
-        ('cliente', 'Cliente'),
-        ('administrador', 'Administrador'),
-    ]
-    nombre = models.CharField(max_length=100)
-    correo = models.EmailField(default='default@example.com')
+    ADMINISTRADOR = 1
+    CLIENTE = 2
+    GERENTE = 3
+    ROLES = (
+        (ADMINISTRADOR, 'administardor'),
+        (CLIENTE, 'cliente'),
+        (GERENTE, 'gerente'),
+    )
+    
+    rol  = models.PositiveSmallIntegerField(
+        choices=ROLES,default=1
+    )
     direccion = models.CharField(max_length=255, default='sin_direccion')
-    tipo_usuario = models.CharField(max_length=50, choices=TIPOS_USUARIO, null=True)
     telefono = models.CharField(max_length=15, blank=True, null= True)
     productos_favoritos = models.ManyToManyField('Producto', through='Favoritos', related_name='usuarios_favoritos')
 

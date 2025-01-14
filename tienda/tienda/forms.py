@@ -34,34 +34,27 @@ class UsuarioModelForm(forms.ModelForm):
             "productos_favoritos": forms.CheckboxSelectMultiple(),
         }
 
-    def clean_nombre(self):
-        nombre = self.cleaned_data.get('nombre')
-        if len(nombre) > 100:
-            raise ValidationError("El nombre no debe exceder los 100 caracteres.")
-        return nombre
-
-    def clean_correo(self):
-        correo = self.cleaned_data.get('correo')
-        if not re.match(r"[^@]+@[^@]+\.[^@]+", correo):
-            raise ValidationError("El correo electrónico no tiene un formato válido.")
-        
-        # Validación para que el correo no se repita
-        if Usuario.objects.filter(correo=correo).exists():
-            raise ValidationError("Ya existe un usuario con este correo electrónico.")
-        
-        return correo
-
-    def clean_telefono(self):
-        telefono = self.cleaned_data.get('telefono')
-        if telefono:
-            # Validación del formato del teléfono
-            if not re.match(r"^\+?\d{7,15}$", telefono):
-                raise ValidationError("El teléfono debe tener entre 7 y 15 dígitos y puede incluir un prefijo '+'.")
-        return telefono
-
     def clean(self):
-        # Aquí puedes agregar validaciones adicionales si es necesario
         cleaned_data = super().clean()
+        nombre = cleaned_data.get('nombre')
+        correo = cleaned_data.get('correo')
+        telefono = cleaned_data.get('telefono')
+
+        # Validar nombre
+        if nombre and len(nombre) > 100:
+            self.add_error('nombre', "El nombre no debe exceder los 100 caracteres.")
+
+        # Validar correo
+        if correo:
+            if not re.match(r"[^@]+@[^@]+\.[^@]+", correo):
+                self.add_error('correo', "El correo electrónico no tiene un formato válido.")
+            elif Usuario.objects.filter(correo=correo).exists():
+                self.add_error('correo', "Ya existe un usuario con este correo electrónico.")
+
+        # Validar teléfono
+        if telefono and not re.match(r"^\+?\d{7,15}$", telefono):
+            self.add_error('telefono', "El teléfono debe tener entre 7 y 15 dígitos y puede incluir un prefijo '+'.")
+
         return cleaned_data
     
 class BusquedaAvanzadaUsuarioForm(forms.Form):
@@ -80,26 +73,20 @@ class BusquedaAvanzadaUsuarioForm(forms.Form):
     )
     
     def clean(self):
-        # Lógica de validación personalizada
-        super().clean()
-        
-        # Obtener los datos del formulario
-        nombre = self.cleaned_data.get('nombre')
-        tipo_usuario = self.cleaned_data.get('tipo_usuario')
-        direccion = self.cleaned_data.get('direccion')
-        
-        # Validar que al menos uno de los campos tenga datos
+        cleaned_data = super().clean()
+        nombre = cleaned_data.get('nombre')
+        tipo_usuario = cleaned_data.get('tipo_usuario')
+        direccion = cleaned_data.get('direccion')
+
+        # Validar que al menos uno de los campos esté lleno
         if not nombre and not tipo_usuario and not direccion:
-            self.add_error('nombre', 'Debe introducir al menos un valor en un campo del formulario.')
-            self.add_error('tipo_usuario', 'Debe seleccionar al menos un tipo de usuario.')
-            self.add_error('direccion', 'Debe introducir al menos un valor en un campo del formulario.')
-        
+            self.add_error(None, "Debe completar al menos uno de los campos para realizar la búsqueda.")
+
         # Validar que el nombre tenga al menos 3 caracteres si está presente
         if nombre and len(nombre) < 3:
-            self.add_error('nombre', 'Debe introducir al menos 3 caracteres para el nombre.')
-        
-        # Siempre devolver los datos validados
-        return self.cleaned_data
+            self.add_error('nombre', "Debe introducir al menos 3 caracteres para el nombre.")
+
+        return cleaned_data
         
 class OrdenModelForm(forms.ModelForm):
     class Meta:
@@ -120,28 +107,26 @@ class OrdenModelForm(forms.ModelForm):
             'archivo_adjunto': forms.ClearableFileInput(attrs={'class': 'form-control'}),
         }
 
-    def clean_total(self):
-        total = self.cleaned_data.get('total')
-        if total is None or total <= 0:
-            raise ValidationError("El total debe ser mayor a 0.")
-        return total
-
-    def clean_metodo_pago(self):
-        metodo_pago = self.cleaned_data.get('metodo_pago')
-        if not metodo_pago or len(metodo_pago.strip()) == 0:
-            raise ValidationError("Debe especificar un método de pago.")
-        return metodo_pago
-
     def clean(self):
         cleaned_data = super().clean()
-        estado = cleaned_data.get('estado')
         total = cleaned_data.get('total')
+        metodo_pago = cleaned_data.get('metodo_pago')
+        estado = cleaned_data.get('estado')
 
-        # Validación adicional: No puede estar pendiente si el total es mayor a 1000 (ejemplo)
-        if estado == 'pendiente' and total is not None and total > 1000:
-            self.add_error('estado', 'Las órdenes pendientes no pueden tener un total mayor a 1000.')
+        # Validar total
+        if total is None or total <= 0:
+            self.add_error('total', "El total debe ser mayor a 0.")
+
+        # Validar método de pago
+        if not metodo_pago or len(metodo_pago.strip()) == 0:
+            self.add_error('metodo_pago', "Debe especificar un método de pago.")
+
+        # Validación adicional: No puede estar pendiente si el total es mayor a 1000
+        if estado == 'pendiente' and total and total > 1000:
+            self.add_error('estado', "Las órdenes pendientes no pueden tener un total mayor a 1000.")
 
         return cleaned_data
+
 
 class BusquedaAvanzadaOrdenForm(forms.Form):
     estado = forms.ChoiceField(
@@ -166,17 +151,24 @@ class BusquedaAvanzadaOrdenForm(forms.Form):
     )
 
     def clean(self):
-        # Validaciones personalizadas
-        super().clean()
-        total_min = self.cleaned_data.get('total_min')
-        total_max = self.cleaned_data.get('total_max')
+        cleaned_data = super().clean()
+        estado = cleaned_data.get('estado')
+        usuario = cleaned_data.get('usuario')
+        total_min = cleaned_data.get('total_min')
+        total_max = cleaned_data.get('total_max')
+
+        # Validar que al menos un campo tenga un valor
+        if not estado and not usuario and total_min is None and total_max is None:
+            raise forms.ValidationError("Debe introducir al menos un criterio de búsqueda.")
 
         # Validar que total_max sea mayor que total_min si ambos están presentes
         if total_min is not None and total_max is not None and total_max < total_min:
-            self.add_error('total_min', 'El total mínimo no puede ser mayor que el total máximo.')
-            self.add_error('total_max', 'El total máximo no puede ser menor que el total mínimo.')
+            self.add_error('total_min', "El total mínimo no puede ser mayor que el total máximo.")
+            self.add_error('total_max', "El total máximo no puede ser menor que el total mínimo.")
 
-        return self.cleaned_data
+        return cleaned_data
+
+
 
 class ProvedorModelForm(forms.ModelForm):
     class Meta:
@@ -197,33 +189,31 @@ class ProvedorModelForm(forms.ModelForm):
             'productos': forms.CheckboxSelectMultiple(),
         }
 
-    def clean_nombre(self):
-        nombre = self.cleaned_data.get('nombre')
-        if Provedor.objects.filter(nombre=nombre).exists():
-            raise ValidationError("Ya existe un proveedor con este nombre.")
-        return nombre
-
-    def clean_telefono(self):
-        telefono = self.cleaned_data.get('telefono')
-        if not re.match(r'^\+?\d{7,15}$', telefono):
-            raise ValidationError("El teléfono debe tener entre 7 y 15 dígitos y puede incluir un prefijo '+'.")
-        return telefono
-
-    def clean_correo(self):
-        correo = self.cleaned_data.get('correo')
-        if correo and Provedor.objects.filter(correo=correo).exists():
-            raise ValidationError("Ya existe un proveedor con este correo electrónico.")
-        return correo
-
     def clean(self):
         cleaned_data = super().clean()
-        
-        # Asegurarse de que al menos un producto esté seleccionado
+        nombre = cleaned_data.get('nombre')
+        telefono = cleaned_data.get('telefono')
+        correo = cleaned_data.get('correo')
         productos = cleaned_data.get('productos')
+
+        # Validar nombre único
+        if nombre and Provedor.objects.filter(nombre=nombre).exists():
+            self.add_error('nombre', "Ya existe un proveedor con este nombre.")
+
+        # Validar teléfono
+        if telefono and not re.match(r'^\+?\d{7,15}$', telefono):
+            self.add_error('telefono', "El teléfono debe tener entre 7 y 15 dígitos y puede incluir un prefijo '+'.")
+
+        # Validar correo único
+        if correo and Provedor.objects.filter(correo=correo).exists():
+            self.add_error('correo', "Ya existe un proveedor con este correo electrónico.")
+
+        # Validar selección de al menos un producto
         if not productos:
             self.add_error('productos', "Debe seleccionar al menos un producto.")
 
         return cleaned_data
+
         
 class BusquedaAvanzadaProvedorForm(forms.Form):
     nombre = forms.CharField(
@@ -240,16 +230,16 @@ class BusquedaAvanzadaProvedorForm(forms.Form):
     )
 
     def clean(self):
-        # Validación personalizada para asegurar al menos un campo completado
-        super().clean()
-        nombre = self.cleaned_data.get('nombre')
-        contacto = self.cleaned_data.get('contacto')
-        telefono = self.cleaned_data.get('telefono')
+        cleaned_data = super().clean()
+        nombre = cleaned_data.get('nombre')
+        contacto = cleaned_data.get('contacto')
+        telefono = cleaned_data.get('telefono')
 
+        # Validar que al menos un campo esté lleno
         if not nombre and not contacto and not telefono:
-            raise forms.ValidationError("Debe completar al menos un campo para realizar la búsqueda.")
+            self.add_error(None, "Debe completar al menos un campo para realizar la búsqueda.")
 
-        return self.cleaned_data
+        return cleaned_data
 
 class InventarioModelForm(forms.ModelForm):
     class Meta:
@@ -268,34 +258,22 @@ class InventarioModelForm(forms.ModelForm):
             'minimo_requerido': forms.NumberInput(attrs={'class': 'form-control'}),
         }
 
-    def clean_cantidad_disponible(self):
-        cantidad_disponible = self.cleaned_data.get('cantidad_disponible')
-        if cantidad_disponible is None or cantidad_disponible <= 0:
-            raise ValidationError("La cantidad disponible debe ser mayor a 0.")
-        return cantidad_disponible
-
-    def clean_minimo_requerido(self):
-        minimo_requerido = self.cleaned_data.get('minimo_requerido')
-        cantidad_disponible = self.cleaned_data.get('cantidad_disponible')
-
-        # Verificar si ambos campos tienen un valor válido antes de hacer la comparación
-        if minimo_requerido is not None and cantidad_disponible is not None:
-            if minimo_requerido > cantidad_disponible:
-                raise ValidationError("El mínimo requerido no puede ser mayor que la cantidad disponible.")
-        return minimo_requerido
-
     def clean(self):
         cleaned_data = super().clean()
         cantidad_disponible = cleaned_data.get('cantidad_disponible')
         minimo_requerido = cleaned_data.get('minimo_requerido')
 
-        # Validación adicional: Asegurarse de que mínimo requerido no sea mayor que cantidad disponible
-        if cantidad_disponible is not None and minimo_requerido is not None:
+        # Validar cantidad disponible
+        if cantidad_disponible is None or cantidad_disponible <= 0:
+            self.add_error('cantidad_disponible', "La cantidad disponible debe ser mayor a 0.")
+
+        # Validar que el mínimo requerido no sea mayor que la cantidad disponible
+        if minimo_requerido is not None and cantidad_disponible is not None:
             if minimo_requerido > cantidad_disponible:
-                self.add_error('minimo_requerido', 'El mínimo requerido no puede ser mayor que la cantidad disponible.')
+                self.add_error('minimo_requerido', "El mínimo requerido no puede ser mayor que la cantidad disponible.")
 
         return cleaned_data
-    
+
 class BusquedaAvanzadaInventarioForm(forms.Form):
     producto = forms.CharField(
         required=False,
@@ -317,18 +295,17 @@ class BusquedaAvanzadaInventarioForm(forms.Form):
     )
 
     def clean(self):
-        # Validación personalizada
-        super().clean()
-        cantidad_min = self.cleaned_data.get('cantidad_min')
-        cantidad_max = self.cleaned_data.get('cantidad_max')
+        cleaned_data = super().clean()
+        cantidad_min = cleaned_data.get('cantidad_min')
+        cantidad_max = cleaned_data.get('cantidad_max')
 
-        # Validar que la cantidad máxima no sea menor que la cantidad mínima
+        # Validar que cantidad máxima no sea menor que cantidad mínima
         if cantidad_min is not None and cantidad_max is not None and cantidad_max < cantidad_min:
-            self.add_error('cantidad_min', 'La cantidad mínima no puede ser mayor que la cantidad máxima.')
-            self.add_error('cantidad_max', 'La cantidad máxima no puede ser menor que la cantidad mínima.')
+            self.add_error('cantidad_min', "La cantidad mínima no puede ser mayor que la cantidad máxima.")
+            self.add_error('cantidad_max', "La cantidad máxima no puede ser menor que la cantidad mínima.")
 
-        return self.cleaned_data
-    
+        return cleaned_data
+
 class TarjetaModelForm(forms.ModelForm):
     class Meta:
         model = Tarjeta
@@ -348,36 +325,28 @@ class TarjetaModelForm(forms.ModelForm):
             'codigo_seguridad': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'CVV'}),
         }
 
-    def clean_numero_tarjeta(self):
-        numero_tarjeta = self.cleaned_data.get('numero_tarjeta')
-        
-        # Validación para asegurarse de que el número de tarjeta tenga exactamente 16 dígitos
-        if len(numero_tarjeta) != 16 or not numero_tarjeta.isdigit():
-            raise ValidationError("El número de tarjeta debe tener exactamente 16 dígitos y solo contener números.")
-        return numero_tarjeta
-
-    def clean_fecha_expiracion(self):
-        fecha_expiracion = self.cleaned_data.get('fecha_expiracion')
-        
-        # Validación para asegurarse de que la fecha de expiración sea posterior a la fecha actual
-        if fecha_expiracion <= date.today():
-            raise ValidationError("La tarjeta ha expirado. Debe tener una fecha posterior a hoy.")
-        return fecha_expiracion
-
-    def clean_codigo_seguridad(self):
-        codigo_seguridad = self.cleaned_data.get('codigo_seguridad')
-        
-        # Validación para asegurarse de que el código de seguridad tenga entre 3 y 4 dígitos
-        if len(codigo_seguridad) < 3 or len(codigo_seguridad) > 4 or not codigo_seguridad.isdigit():
-            raise ValidationError("El código de seguridad debe tener entre 3 y 4 dígitos.")
-        return codigo_seguridad
-
     def clean(self):
         cleaned_data = super().clean()
+        numero_tarjeta = cleaned_data.get('numero_tarjeta')
+        fecha_expiracion = cleaned_data.get('fecha_expiracion')
+        codigo_seguridad = cleaned_data.get('codigo_seguridad')
 
-        # Puedes agregar más validaciones si es necesario
+        # Validar número de tarjeta
+        if numero_tarjeta:
+            if len(numero_tarjeta) != 16 or not numero_tarjeta.isdigit():
+                self.add_error('numero_tarjeta', "El número de tarjeta debe tener exactamente 16 dígitos y solo contener números.")
+
+        # Validar fecha de expiración
+        if fecha_expiracion and fecha_expiracion <= date.today():
+            self.add_error('fecha_expiracion', "La tarjeta ha expirado. Debe tener una fecha posterior a hoy.")
+
+        # Validar código de seguridad
+        if codigo_seguridad:
+            if len(codigo_seguridad) < 3 or len(codigo_seguridad) > 4 or not codigo_seguridad.isdigit():
+                self.add_error('codigo_seguridad', "El código de seguridad debe tener entre 3 y 4 dígitos.")
 
         return cleaned_data
+
         
 class BusquedaAvanzadaTarjetaForm(forms.Form):
     usuario = forms.CharField(
@@ -398,17 +367,17 @@ class BusquedaAvanzadaTarjetaForm(forms.Form):
     )
 
     def clean(self):
-        # Validaciones personalizadas
-        super().clean()
-        fecha_inicio = self.cleaned_data.get('fecha_inicio')
-        fecha_fin = self.cleaned_data.get('fecha_fin')
+        cleaned_data = super().clean()
+        fecha_inicio = cleaned_data.get('fecha_inicio')
+        fecha_fin = cleaned_data.get('fecha_fin')
 
         # Validar que la fecha fin no sea anterior a la fecha inicio
         if fecha_inicio and fecha_fin and fecha_fin < fecha_inicio:
-            self.add_error('fecha_inicio', 'La fecha desde no puede ser mayor que la fecha hasta.')
-            self.add_error('fecha_fin', 'La fecha hasta no puede ser menor que la fecha desde.')
+            self.add_error('fecha_inicio', "La fecha desde no puede ser mayor que la fecha hasta.")
+            self.add_error('fecha_fin', "La fecha hasta no puede ser menor que la fecha desde.")
 
-        return self.cleaned_data
+        return cleaned_data
+
         
 class CategoriaModelForm(forms.ModelForm):
     class Meta:
@@ -425,32 +394,30 @@ class CategoriaModelForm(forms.ModelForm):
             'nombre': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre de la categoría'}),
             'descripcion': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
             'fecha_creacion': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            'estado': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Activo/Inactivo'}),
+            'estado': forms.Select(attrs={'class': 'form-control'}),
             'prioridad': forms.NumberInput(attrs={'class': 'form-control'}),
         }
 
-    def clean_nombre(self):
-        nombre = self.cleaned_data.get('nombre')
-        if Categoria.objects.filter(nombre=nombre).exists():
-            raise ValidationError("Ya existe una categoría con este nombre.")
-        return nombre
-
-    def clean_estado(self):
-        estado = self.cleaned_data.get('estado')
-        if estado not in ['activo', 'inactivo']:
-            raise ValidationError("El estado debe ser 'activo' o 'inactivo'.")
-        return estado
-
-    def clean_prioridad(self):
-        prioridad = self.cleaned_data.get('prioridad')
-        if prioridad <= 0:
-            raise ValidationError("La prioridad debe ser un número mayor que 0.")
-        return prioridad
-
     def clean(self):
         cleaned_data = super().clean()
-        # Validación adicional si es necesario
+        nombre = cleaned_data.get('nombre')
+        estado = cleaned_data.get('estado')
+        prioridad = cleaned_data.get('prioridad')
+
+        # Validar nombre único
+        if nombre and Categoria.objects.filter(nombre=nombre).exists():
+            self.add_error('nombre', "Ya existe una categoría con este nombre.")
+
+        # Validar estado
+        if estado and estado not in ['activo', 'inactivo']:
+            self.add_error('estado', "El estado debe ser 'activo' o 'inactivo'.")
+
+        # Validar prioridad
+        if prioridad is not None and prioridad <= 0:
+            self.add_error('prioridad', "La prioridad debe ser un número mayor que 0.")
+
         return cleaned_data
+
     
 class BusquedaAvanzadaCategoriaForm(forms.Form):
     nombre = forms.CharField(
@@ -474,13 +441,13 @@ class BusquedaAvanzadaCategoriaForm(forms.Form):
     )
 
     def clean(self):
-        super().clean()
-        prioridad_min = self.cleaned_data.get('prioridad_min')
-        prioridad_max = self.cleaned_data.get('prioridad_max')
+        cleaned_data = super().clean()
+        prioridad_min = cleaned_data.get('prioridad_min')
+        prioridad_max = cleaned_data.get('prioridad_max')
 
-        # Validar que la prioridad máxima no sea menor que la prioridad mínima
+        # Validar que la prioridad máxima no sea menor que la mínima
         if prioridad_min is not None and prioridad_max is not None and prioridad_max < prioridad_min:
-            self.add_error('prioridad_min', 'La prioridad mínima no puede ser mayor que la prioridad máxima.')
-            self.add_error('prioridad_max', 'La prioridad máxima no puede ser menor que la prioridad mínima.')
+            self.add_error('prioridad_min', "La prioridad mínima no puede ser mayor que la prioridad máxima.")
+            self.add_error('prioridad_max', "La prioridad máxima no puede ser menor que la prioridad mínima.")
 
-        return self.cleaned_data
+        return cleaned_data

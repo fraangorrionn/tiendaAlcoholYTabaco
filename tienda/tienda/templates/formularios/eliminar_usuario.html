@@ -2,12 +2,14 @@
 
 {% block title %}Eliminar Usuario{% endblock %}
 
-{% block content %}
-<h2>Eliminar Usuario</h2>
-<p>¿Estás seguro de que deseas eliminar a {{ usuario.nombre }}?</p>
-<form method="post">
-    {% csrf_token %}
-    <button type="submit" class="btn btn-danger">Sí, eliminar</button>
-</form>
-<a href="{% url 'leer_usuarios' %}">Cancelar</a>
+{% block contenido %}
+<div class="container mt-5">
+    <h1>Eliminar Usuario</h1>
+    <p>¿Estás seguro de que deseas eliminar el usuario <strong>{{ usuario.nombre }}</strong>?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Sí, eliminar</button>
+        <a href="{% url 'lista_usuarios' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
 {% endblock %}

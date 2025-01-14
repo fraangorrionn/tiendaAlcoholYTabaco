@@ -9,6 +9,11 @@
     <!-- Formulario de búsqueda avanzada -->
     <form method="get" class="mb-4">
         {{ formulario.as_p }}
+        {% if formulario.non_field_errors %}
+            <div class="alert alert-danger">
+                {{ formulario.non_field_errors }}
+            </div>
+        {% endif %}
         <button type="submit" class="btn btn-primary mt-3">Buscar</button>
     </form>
 
@@ -33,7 +38,7 @@
                 <td>{{ orden.usuario.nombre }}</td>
                 <td>
                     {% if orden.archivo_adjunto %}
-                        <a href="{{ orden.archivo_adjunto.url }}" target="_blank">Ver Archivo</a>
+                        <img src="{{ orden.archivo_adjunto.url }}" alt="Archivo Adjunto" style="width: 100px; height: auto;">
                     {% else %}
                         No hay archivo
                     {% endif %}
@@ -43,6 +48,10 @@
                     <a href="{% url 'eliminar_orden' orden.pk %}" class="btn btn-danger btn-sm">Eliminar</a>
                 </td>
             </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" class="text-center">No se encontraron resultados.</td>
+            </tr>
             {% endfor %}
         </tbody>
     </table>
@@ -50,3 +59,4 @@
     <a href="{% url 'crear_orden' %}" class="btn btn-primary">Crear Orden</a>
 </div>
 {% endblock %}
+

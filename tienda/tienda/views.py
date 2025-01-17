@@ -6,12 +6,17 @@ from .forms import *
 
 # Vista principal que redirige al índice de URLs.
 def index(request):
+    
+    if(not "fecha_inicio" in request.session):
+        request.session["fecha_inicio"] = datetime.now().strftime('%d/%m/%Y %H:%M')
+     
     return render(request, 'index.html')
 
 # Muestra una lista de todos los usuarios registrados en la plataforma con su tarjeta y productos favoritos.
 def lista_usuarios(request):
-    usuarios = Usuario.objects.select_related('tarjeta').prefetch_related('productos_favoritos').all()
+    usuarios = Usuario.objects.all()  # Eliminamos `select_related('tarjeta')`
     return render(request, 'Paginas/usuarios_list.html', {'usuarios': usuarios})
+
 
 # Muestra una lista de todos los productos con sus categorías, ordenados por precio.
 def lista_productos(request):
@@ -175,20 +180,15 @@ def crear_usuario(request):
 
 # Leer la lista de usuarios
 def leer_usuarios(request):
-    # Instanciar el formulario con los datos del request
     formulario = BusquedaAvanzadaUsuarioForm(request.GET or None)
     usuarios = Usuario.objects.all()
 
     if formulario.is_valid():
-        # Aplicar los filtros con datos limpios
-        nombre = formulario.cleaned_data.get('nombre')
-        tipo_usuario = formulario.cleaned_data.get('tipo_usuario')
+        rol = formulario.cleaned_data.get('rol')
         direccion = formulario.cleaned_data.get('direccion')
 
-        if nombre:
-            usuarios = usuarios.filter(nombre__icontains=nombre)
-        if tipo_usuario:
-            usuarios = usuarios.filter(tipo_usuario__in=tipo_usuario)
+        if rol:
+            usuarios = usuarios.filter(rol__in=rol)
         if direccion:
             usuarios = usuarios.filter(direccion__icontains=direccion)
 
@@ -197,20 +197,18 @@ def leer_usuarios(request):
         'formulario': formulario,
     })
 
+
 # Actualizar un usuario existente
 def editar_usuario(request, pk):
-    usuario = get_object_or_404(Usuario, pk=pk)  # Obtén el usuario o lanza un 404
+    usuario = get_object_or_404(Usuario, pk=pk)
 
     if request.method == "POST":
         formulario = UsuarioModelForm(request.POST, instance=usuario)
         if formulario.is_valid():
             formulario.save()
-            print(f"Usuario {usuario.nombre} actualizado correctamente.")  # Depuración
-            return redirect("leer_usuarios")  # Asegúrate de que esta URL esté definida
-        else:
-            print("Errores del formulario:", formulario.errors)  # Depuración
+            return redirect("leer_usuarios")
     else:
-        formulario = UsuarioModelForm(instance=usuario)  # Carga el formulario con los datos existentes
+        formulario = UsuarioModelForm(instance=usuario)
 
     return render(request, 'formularios/editar_usuario.html', {"formulario": formulario, "usuario": usuario})
 

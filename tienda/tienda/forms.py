@@ -11,59 +11,34 @@ import datetime
 class UsuarioModelForm(forms.ModelForm):
     class Meta:
         model = Usuario
-        fields = ['nombre', 'correo', 'direccion', 'tipo_usuario', 'telefono', 'productos_favoritos']
+        fields = ['rol', 'direccion', 'telefono', 'productos_favoritos']  # Cambiamos tipo_usuario por rol
         labels = {
-            "nombre": "Nombre del Usuario",
-            "correo": "Correo Electrónico",
+            "rol": "Rol del Usuario",
             "direccion": "Dirección",
-            "tipo_usuario": "Tipo de Usuario",
             "telefono": "Teléfono",
             "productos_favoritos": "Productos Favoritos",
         }
-        help_texts = {
-            "nombre": "Máximo 100 caracteres.",
-            "correo": "Debe tener un formato válido (ejemplo: usuario@example.com).",
-            "productos_favoritos": "Selecciona uno o más productos favoritos.",
-        }
         widgets = {
-            "nombre": forms.TextInput(attrs={"class": "form-control", "placeholder": "Nombre del usuario"}),
-            "correo": forms.EmailInput(attrs={"class": "form-control", "placeholder": "usuario@example.com"}),
+            "rol": forms.Select(attrs={"class": "form-select"}),  # Cambiamos tipo_usuario por rol
             "direccion": forms.TextInput(attrs={"placeholder": "Dirección completa", "class": "form-control"}),
-            "tipo_usuario": forms.Select(attrs={"class": "form-select"}),
             "telefono": forms.TextInput(attrs={"placeholder": "Número de teléfono", "class": "form-control"}),
             "productos_favoritos": forms.CheckboxSelectMultiple(),
         }
 
     def clean(self):
         cleaned_data = super().clean()
-        nombre = cleaned_data.get('nombre')
-        correo = cleaned_data.get('correo')
         telefono = cleaned_data.get('telefono')
-
-        # Validar nombre
-        if nombre and len(nombre) > 100:
-            self.add_error('nombre', "El nombre no debe exceder los 100 caracteres.")
-
-        # Validar correo
-        if correo:
-            if not re.match(r"[^@]+@[^@]+\.[^@]+", correo):
-                self.add_error('correo', "El correo electrónico no tiene un formato válido.")
-            elif Usuario.objects.filter(correo=correo).exists():
-                self.add_error('correo', "Ya existe un usuario con este correo electrónico.")
 
         # Validar teléfono
         if telefono and not re.match(r"^\+?\d{7,15}$", telefono):
             self.add_error('telefono', "El teléfono debe tener entre 7 y 15 dígitos y puede incluir un prefijo '+'.")
 
         return cleaned_data
+
     
 class BusquedaAvanzadaUsuarioForm(forms.Form):
-    nombre = forms.CharField(
-        required=False,
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Buscar por nombre'})
-    )
-    tipo_usuario = forms.MultipleChoiceField(
-        choices=Usuario.TIPOS_USUARIO,
+    rol = forms.MultipleChoiceField(  # Cambiamos tipo_usuario por rol
+        choices=Usuario.ROLES,
         required=False,
         widget=forms.CheckboxSelectMultiple()
     )
@@ -74,19 +49,15 @@ class BusquedaAvanzadaUsuarioForm(forms.Form):
     
     def clean(self):
         cleaned_data = super().clean()
-        nombre = cleaned_data.get('nombre')
-        tipo_usuario = cleaned_data.get('tipo_usuario')
+        rol = cleaned_data.get('rol')
         direccion = cleaned_data.get('direccion')
 
-        # Validar que al menos uno de los campos esté lleno
-        if not nombre and not tipo_usuario and not direccion:
-            self.add_error(None, "Debe completar al menos uno de los campos para realizar la búsqueda.")
-
-        # Validar que el nombre tenga al menos 3 caracteres si está presente
-        if nombre and len(nombre) < 3:
-            self.add_error('nombre', "Debe introducir al menos 3 caracteres para el nombre.")
+        # Validar que al menos un campo esté lleno
+        if not rol and not direccion:
+            raise forms.ValidationError("Debe completar al menos un campo para realizar la búsqueda.")
 
         return cleaned_data
+
         
 class OrdenModelForm(forms.ModelForm):
     class Meta:

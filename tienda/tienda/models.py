@@ -2,22 +2,24 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import AbstractUser
 
-class Usuario(models.Model):
+from django.contrib.auth.models import AbstractUser
+from django.db import models
+
+class Usuario(AbstractUser):
     ADMINISTRADOR = 1
     CLIENTE = 2
     GERENTE = 3
     ROLES = (
-        (ADMINISTRADOR, 'administardor'),
+        (ADMINISTRADOR, 'administrador'),
         (CLIENTE, 'cliente'),
         (GERENTE, 'gerente'),
     )
-    
-    rol  = models.PositiveSmallIntegerField(
-        choices=ROLES,default=1
-    )
+
+    rol = models.PositiveSmallIntegerField(choices=ROLES, default=CLIENTE)
     direccion = models.CharField(max_length=255, default='sin_direccion')
-    telefono = models.CharField(max_length=15, blank=True, null= True)
+    telefono = models.CharField(max_length=15, blank=True, null=True)
     productos_favoritos = models.ManyToManyField('Producto', through='Favoritos', related_name='usuarios_favoritos')
+
 
 class Producto(models.Model):
     TIPO_PRODUCTO = [
@@ -25,6 +27,7 @@ class Producto(models.Model):
         ('cerveza', 'Cerveza'),
         ('tabaco', 'Tabaco'),
     ]
+    
     nombre = models.CharField(max_length=100)
     precio = models.DecimalField(max_digits=10, decimal_places=2)
     tipo = models.CharField(max_length=20, choices=TIPO_PRODUCTO, default='vino')

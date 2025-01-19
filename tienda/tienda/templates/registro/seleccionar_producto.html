@@ -1,0 +1,12 @@
+{% extends "principal.html" %}
+
+{% block contenido %}
+<div class="container my-5">
+    <h2>Seleccionar Producto</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Guardar</button>
+    </form>
+</div>
+{% endblock %}

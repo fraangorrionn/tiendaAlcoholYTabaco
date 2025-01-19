@@ -1,12 +1,11 @@
-{% extends "principal.html" %}
-{% load static %}
-{% block link_css %}
-    <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
-{% endblock %}
-
 {% block contenido %}
-    <div class="container">
-        <h1>Lista de Usuarios</h1>
+<div class="container">
+    <h1>Lista de Usuarios</h1>
+    {% if not user.is_authenticated %}
+        <p>Por favor, <a href="{% url 'login' %}">inicia sesión</a> para ver esta información.</p>
+    {% elif user.rol != 1 %}
+        <p>No tienes permisos para acceder a esta sección.</p>
+    {% else %}
         <table>
             <thead>
                 <tr>
@@ -32,5 +31,6 @@
                 {% endfor %}
             </tbody>
         </table>
-    </div>
+    {% endif %}
+</div>
 {% endblock %}

@@ -6,7 +6,7 @@ import re
 from .models import Usuario, Producto, Orden, Provedor
 from datetime import date
 import datetime
-
+from django.contrib.auth.forms import UserCreationForm
 
 class UsuarioModelForm(forms.ModelForm):
     class Meta:
@@ -78,35 +78,32 @@ class OrdenModelForm(forms.ModelForm):
             'archivo_adjunto': forms.ClearableFileInput(attrs={'class': 'form-control'}),
         }
 
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super().__init__(*args, **kwargs)
+        if self.request and self.request.user.rol == Usuario.CLIENTE:
+            self.fields['usuario'].queryset = Usuario.objects.filter(id=self.request.user.id)
+
     def clean(self):
         cleaned_data = super().clean()
         total = cleaned_data.get('total')
         metodo_pago = cleaned_data.get('metodo_pago')
         estado = cleaned_data.get('estado')
 
-        # Validar total
         if total is None or total <= 0:
             self.add_error('total', "El total debe ser mayor a 0.")
 
-        # Validar método de pago
         if not metodo_pago or len(metodo_pago.strip()) == 0:
             self.add_error('metodo_pago', "Debe especificar un método de pago.")
 
-        # Validación adicional: No puede estar pendiente si el total es mayor a 1000
         if estado == 'pendiente' and total and total > 1000:
             self.add_error('estado', "Las órdenes pendientes no pueden tener un total mayor a 1000.")
 
         return cleaned_data
 
-
 class BusquedaAvanzadaOrdenForm(forms.Form):
     estado = forms.ChoiceField(
         choices=[('', 'Todos los estados')] + Orden.ESTADO_ORDEN,
-        required=False,
-        widget=forms.Select(attrs={'class': 'form-select'})
-    )
-    usuario = forms.ModelChoiceField(
-        queryset=Usuario.objects.all(),
         required=False,
         widget=forms.Select(attrs={'class': 'form-select'})
     )
@@ -121,15 +118,27 @@ class BusquedaAvanzadaOrdenForm(forms.Form):
         widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Total máximo'})
     )
 
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)  # Recibimos el request desde la vista
+        super().__init__(*args, **kwargs)
+
+        # Si el usuario logueado es un gerente o administrador, mostrar el campo 'usuario'
+        if self.request and self.request.user.rol in [Usuario.GERENTE, Usuario.ADMINISTRADOR]:
+            self.fields['usuario'] = forms.ModelChoiceField(
+                queryset=Usuario.objects.all(),
+                required=False,
+                widget=forms.Select(attrs={'class': 'form-select'}),
+                label="Usuario Asociado"
+            )
+
     def clean(self):
         cleaned_data = super().clean()
         estado = cleaned_data.get('estado')
-        usuario = cleaned_data.get('usuario')
         total_min = cleaned_data.get('total_min')
         total_max = cleaned_data.get('total_max')
 
         # Validar que al menos un campo tenga un valor
-        if not estado and not usuario and total_min is None and total_max is None:
+        if not estado and total_min is None and total_max is None:
             raise forms.ValidationError("Debe introducir al menos un criterio de búsqueda.")
 
         # Validar que total_max sea mayor que total_min si ambos están presentes
@@ -167,23 +176,20 @@ class ProvedorModelForm(forms.ModelForm):
         correo = cleaned_data.get('correo')
         productos = cleaned_data.get('productos')
 
-        # Validar nombre único
         if nombre and Provedor.objects.filter(nombre=nombre).exists():
             self.add_error('nombre', "Ya existe un proveedor con este nombre.")
 
-        # Validar teléfono
         if telefono and not re.match(r'^\+?\d{7,15}$', telefono):
             self.add_error('telefono', "El teléfono debe tener entre 7 y 15 dígitos y puede incluir un prefijo '+'.")
 
-        # Validar correo único
         if correo and Provedor.objects.filter(correo=correo).exists():
             self.add_error('correo', "Ya existe un proveedor con este correo electrónico.")
 
-        # Validar selección de al menos un producto
         if not productos:
             self.add_error('productos', "Debe seleccionar al menos un producto.")
 
         return cleaned_data
+
 
         
 class BusquedaAvanzadaProvedorForm(forms.Form):
@@ -422,3 +428,54 @@ class BusquedaAvanzadaCategoriaForm(forms.Form):
             self.add_error('prioridad_max', "La prioridad máxima no puede ser menor que la prioridad mínima.")
 
         return cleaned_data
+
+class RegistroUsuarioForm(UserCreationForm):
+    class Meta:
+        model = Usuario
+        fields = ['username', 'email', 'password1', 'password2', 'rol', 'direccion', 'telefono']
+
+    def clean(self):
+        cleaned_data = super().clean()
+        rol = cleaned_data.get('rol')
+        direccion = cleaned_data.get('direccion')
+        telefono = cleaned_data.get('telefono')
+
+        # Validaciones según el rol
+        if rol == Usuario.CLIENTE and not direccion:
+            self.add_error('direccion', "La dirección es obligatoria para los clientes.")
+
+        if rol == Usuario.GERENTE and not telefono:
+            self.add_error('telefono', "El teléfono es obligatorio para los gerentes.")
+
+        return cleaned_data
+    
+class ProductoProveedorForm(forms.Form):
+    producto = forms.ModelChoiceField(queryset=Producto.objects.none(), label="Producto")
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)  # Recibimos el request desde la vista
+        super().__init__(*args, **kwargs)
+        if self.request and self.request.user.rol == Usuario.GERENTE:
+            # Filtramos los productos solo para el proveedor logueado
+            self.fields['producto'].queryset = Producto.objects.filter(provedores__id=self.request.user.id)
+            
+class ProductoDinamicoForm(forms.Form):
+    producto = forms.ModelChoiceField(
+        queryset=Producto.objects.none(),
+        label="Producto",
+        widget=forms.Select(attrs={"class": "form-control"}),
+    )
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)  # Recibir el request desde la vista
+        super().__init__(*args, **kwargs)
+        
+        # Filtrar productos según el rol del usuario logueado
+        if self.request and self.request.user.is_authenticated:
+            if self.request.user.rol == Usuario.CLIENTE:
+                # Mostrar solo los productos favoritos del cliente
+                favoritos = Favoritos.objects.filter(usuario=self.request.user).values_list('producto', flat=True)
+                self.fields['producto'].queryset = Producto.objects.filter(id__in=favoritos)
+            elif self.request.user.rol == Usuario.GERENTE:
+                # Mostrar todos los productos
+                self.fields['producto'].queryset = Producto.objects.all()

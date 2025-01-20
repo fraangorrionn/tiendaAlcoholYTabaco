@@ -506,6 +506,132 @@ Se modificó el formulario para permitir la carga de archivos.
 Se actualizó la vista para manejar archivos cargados usando request.FILES.
 Se configuraron las URLs y ajustes de MEDIA para servir los archivos subidos.
 
+# Permisos y Sesiones
+
+
+Aquí tienes el texto listo para copiar y pegar directamente en tu README.md:
+
+Documentación de la Aplicación
+1. Tipos de Usuarios
+Nuestra aplicación incluye dos tipos de usuarios claramente diferenciados, además del administrador:
+
+Cliente: Usuario que puede realizar compras, gestionar sus productos favoritos y ver sus órdenes.
+Gerente: Usuario que puede gestionar inventarios, órdenes, productos y usuarios.
+
+Estos roles se definen en el modelo Usuario mediante el campo rol y se asignan a grupos (Clientes o Gerentes) con permisos diferenciados.
+
+2. Control de Permisos en Vistas
+Cada vista controla los permisos y verifica si el usuario está logueado utilizando:
+
+Decorador @permission_required: Restringe el acceso a usuarios sin los permisos necesarios.
+Autenticación: Si el usuario no está autenticado, se redirige al login.
+
+@permission_required('tienda.view_producto')
+def lista_productos(request):
+    productos = Producto.objects.all()
+    return render(request, 'Paginas/productos_list.html', {'productos': productos})
+
+3. Control de Permisos en Templates
+En los templates, se verifica si el usuario está logueado y se controla el acceso al contenido según su rol y permisos.
+
+Ejemplo de control en la cabecera: {% if perms.tienda.add_categoria %}
+
+4. Variables de Sesión
+Las siguientes variables se guardan en la sesión y aparecen en la cabecera:
+
+fecha_inicio: Fecha y hora de inicio de sesión.
+nombre_usuario: Nombre del usuario logueado.
+rol: Rol del usuario en formato legible.
+productos_favoritos: Número de productos favoritos del usuario.
+
+Estas variables se eliminan automáticamente al cerrar sesión:
+    def logout_view(request):
+        logout(request)
+        request.session.flush()
+        return redirect('login')
+
+5. Registro de Usuarios con Validaciones
+El formulario de registro permite crear usuarios de tipo Cliente o Gerente, con las siguientes validaciones:
+
+Cliente: Debe proporcionar una dirección válida.
+Gerente: Debe proporcionar un teléfono válido.
+6. Funcionalidades de Login y Logout
+La aplicación incluye un sistema de autenticación que permite a los usuarios:
+
+Iniciar sesión con su nombre de usuario y contraseña.
+Cerrar sesión, eliminando las variables de sesión.
+7. Funcionalidad de Select Dinámico
+El contenido de los campos ManyToMany o ManyToOne varía según el usuario logueado. Por ejemplo, en el formulario de órdenes, los usuarios de tipo Cliente solo ven sus propias órdenes.
+
+8. Inclusión Automática del Usuario en Formularios
+En los formularios de creación, el usuario logueado se incluye automáticamente. Por ejemplo, en el formulario de órdenes, el campo usuario se llena con el usuario logueado.
+
+9. Funcionalidad de Búsqueda Filtrada
+Los formularios de búsqueda incluyen filtros dinámicos según el usuario logueado. Por ejemplo, los Clientes solo ven sus propias órdenes, mientras que los Gerentes pueden ver todas.
+
+10. Reinicio de Contraseña
+Se implementó la funcionalidad de reinicio de contraseña utilizando el sistema interno de Django. En local, el enlace de recuperación se obtiene directamente desde la consola del servidor.
+
+## Permisos para Gerentes
+Tienda | reclamo | Can add reclamo
+Tienda | reclamo | Can change reclamo
+Tienda | reclamo | Can delete reclamo
+Tienda | reclamo | Can view reclamo
+Tienda | tarjeta | Can add tarjeta
+Tienda | tarjeta | Can change tarjeta
+Tienda | tarjeta | Can delete tarjeta
+Tienda | tarjeta | Can view tarjeta
+Tienda | usuario | Can add user
+Tienda | usuario | Can change user
+Tienda | usuario | Can delete user
+Tienda | usuario | Can view user
+Tienda | provedor | Can add provedor
+Tienda | provedor | Can change provedor
+Tienda | provedor | Can delete provedor
+Tienda | provedor | Can view provedor
+Tienda | producto | Can add producto
+Tienda | producto | Can change producto
+Tienda | producto | Can delete producto
+Tienda | producto | Can view producto
+Tienda | inventario | Can add inventario
+Tienda | inventario | Can change inventario
+Tienda | inventario | Can delete inventario
+Tienda | inventario | Can view inventario
+Tienda | orden | Can add orden
+Tienda | orden | Can change orden
+Tienda | orden | Can delete orden
+Tienda | orden | Can view orden
+Tienda | categoria | Can add categoria
+Tienda | categoria | Can change categoria
+Tienda | categoria | Can delete categoria
+Tienda | categoria | Can view categoria
+Tienda | detalle orden | Can add detalle orden
+Tienda | detalle orden | Can change detalle orden
+Tienda | detalle orden | Can delete detalle orden
+Tienda | detalle orden | Can view detalle orden
+Tienda | favoritos | Can add favoritos
+Tienda | favoritos | Can change favoritos
+Tienda | favoritos | Can delete favoritos
+Tienda | favoritos | Can view favoritos
+Administración | entrada de registro | Can view log entry
+Administración | entrada de registro | Can add log entry
+Administración | entrada de registro | Can change log entry
+Administración | entrada de registro | Can delete log entry
+
+## Permisos para Usuarios
+Tienda | reclamo | Can add reclamo
+Tienda | reclamo | Can view reclamo
+Tienda | tarjeta | Can view tarjeta
+Tienda | usuario | Can view user
+Tienda | provedor | Can view provedor
+Tienda | producto | Can view producto
+Tienda | inventario | Can view inventario
+Tienda | orden | Can view orden
+Tienda | categoria | Can view categoria
+Tienda | detalle orden | Can view detalle orden
+Tienda | favoritos | Can add favoritos
+Tienda | favoritos | Can view favoritos
+
 
 ------Comando-------
 python3 -m venv myvenv

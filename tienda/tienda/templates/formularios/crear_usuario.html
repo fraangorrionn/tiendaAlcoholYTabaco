@@ -1,15 +1,21 @@
 {% extends 'principal.html' %}
-
 {% block title %}Crear Usuario{% endblock %}
 
 {% block contenido %}
-<div class="container mt-5">
-    <h1>Crear Usuario</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ formulario.as_p }}
-        <button type="submit" class="btn btn-primary">Crear Usuario</button>
-    </form>
-</div>
+{% if perms.tienda.add_usuario %}
+    <div class="container mt-5">
+        <h1>Crear Usuario</h1>
+        <form method="post">
+            {% csrf_token %}
+            {{ formulario.as_p }}
+            <button type="submit" class="btn btn-primary">Crear Usuario</button>
+        </form>
+    </div>
+{% else %}
+    <div class="container mt-5">
+        <p>No tienes permisos para crear usuarios. Contacta al administrador si necesitas acceso.</p>
+    </div>
+{% endif %}
 {% endblock %}
+
 

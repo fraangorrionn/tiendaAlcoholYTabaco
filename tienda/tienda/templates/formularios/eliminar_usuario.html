@@ -1,15 +1,20 @@
 {% extends 'principal.html' %}
-
 {% block title %}Eliminar Usuario{% endblock %}
 
 {% block contenido %}
-<div class="container mt-5">
-    <h1>Eliminar Usuario</h1>
-    <p>¿Estás seguro de que deseas eliminar el usuario <strong>{{ usuario.nombre }}</strong>?</p>
-    <form method="post">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-danger">Sí, eliminar</button>
-        <a href="{% url 'lista_usuarios' %}" class="btn btn-secondary">Cancelar</a>
-    </form>
-</div>
+{% if perms.tienda.delete_usuario %}
+    <div class="container mt-5">
+        <h1>Eliminar Usuario</h1>
+        <p>¿Estás seguro de que deseas eliminar el usuario <strong>{{ usuario.nombre }}</strong>?</p>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Sí, eliminar</button>
+            <a href="{% url 'lista_usuarios' %}" class="btn btn-secondary">Cancelar</a>
+        </form>
+    </div>
+{% else %}
+    <div class="container mt-5">
+        <p>No tienes permisos para eliminar usuarios. Contacta al administrador si necesitas acceso.</p>
+    </div>
+{% endif %}
 {% endblock %}

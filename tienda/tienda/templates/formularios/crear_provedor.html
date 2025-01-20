@@ -1,14 +1,20 @@
 {% extends 'principal.html' %}
-
 {% block title %}Crear Proveedor{% endblock %}
 
 {% block contenido %}
-<div class="container mt-5">
-    <h1>Crear Proveedor</h1>
-    <form method="post" class="needs-validation" novalidate>
-        {% csrf_token %}
-        {{ formulario.as_p }}
-        <button type="submit" class="btn btn-primary">Crear Proveedor</button>
-    </form>
-</div>
+{% if perms.tienda.add_provedor %}
+    <div class="container mt-5">
+        <h1>Crear Proveedor</h1>
+        <form method="post" class="needs-validation" novalidate>
+            {% csrf_token %}
+            {{ formulario.as_p }}
+            <button type="submit" class="btn btn-primary">Crear Proveedor</button>
+        </form>
+    </div>
+{% else %}
+    <div class="container mt-5">
+        <p>No tienes permisos para crear proveedores. Contacta al administrador si necesitas acceso.</p>
+    </div>
+{% endif %}
 {% endblock %}
+

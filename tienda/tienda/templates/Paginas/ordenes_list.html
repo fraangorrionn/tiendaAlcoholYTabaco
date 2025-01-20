@@ -5,6 +5,7 @@
 {% endblock %}
 
 {% block contenido %}
+{% if perms.tienda.view_orden %}
     <div class="container">
         <h1>Lista de Órdenes</h1>
         <table>
@@ -33,4 +34,10 @@
             </tbody>
         </table>
     </div>
+{% else %}
+    <div class="container">
+        <p>No tienes permisos para ver las órdenes. Contacta al administrador si necesitas acceso.</p>
+    </div>
+{% endif %}
 {% endblock %}
+

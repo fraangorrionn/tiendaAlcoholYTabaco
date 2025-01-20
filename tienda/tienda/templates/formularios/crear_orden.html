@@ -1,15 +1,19 @@
 {% extends 'principal.html' %}
-
 {% block title %}Crear Orden{% endblock %}
 
 {% block contenido %}
-<div class="container mt-5">
-    <h1>Crear Orden</h1>
-
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ formulario.as_p }}
-        <button type="submit" class="btn btn-primary">Crear Orden</button>
-    </form>
-</div>
+{% if perms.tienda.add_orden %}
+    <div class="container mt-5">
+        <h1>Crear Orden</h1>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ formulario.as_p }}
+            <button type="submit" class="btn btn-primary">Crear Orden</button>
+        </form>
+    </div>
+{% else %}
+    <div class="container mt-5">
+        <p>No tienes permisos para crear órdenes. Contacta al administrador si necesitas acceso.</p>
+    </div>
+{% endif %}
 {% endblock %}

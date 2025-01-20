@@ -5,9 +5,9 @@
 {% endblock %}
 
 {% block contenido %}
+{% if perms.tienda.view_producto %}
     <div class="container">
         <h1>Lista de Productos</h1>
-
         <table>
             <thead>
                 <tr>
@@ -34,4 +34,9 @@
             </tbody>
         </table>
     </div>
+{% else %}
+    <div class="container">
+        <p>No tienes permisos para ver los productos. Contacta al administrador si necesitas acceso.</p>
+    </div>
+{% endif %}
 {% endblock %}

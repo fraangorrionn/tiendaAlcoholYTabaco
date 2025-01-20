@@ -1,15 +1,21 @@
 {% extends 'principal.html' %}
-
 {% block title %}Editar Proveedor{% endblock %}
 
 {% block contenido %}
-<div class="container mt-5">
-    <h1>Editar Proveedor</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ formulario.as_p }}
-        <button type="submit" class="btn btn-success">Actualizar Proveedor</button>
-    </form>
-    <a href="{% url 'lista_proveedores' %}" class="btn btn-secondary mt-3">Volver a la lista</a>
-</div>
+{% if perms.tienda.change_provedor %}
+    <div class="container mt-5">
+        <h1>Editar Proveedor</h1>
+        <form method="post">
+            {% csrf_token %}
+            {{ formulario.as_p }}
+            <button type="submit" class="btn btn-success">Actualizar Proveedor</button>
+        </form>
+        <a href="{% url 'lista_proveedores' %}" class="btn btn-secondary mt-3">Volver a la lista</a>
+    </div>
+{% else %}
+    <div class="container mt-5">
+        <p>No tienes permisos para editar proveedores. Contacta al administrador si necesitas acceso.</p>
+    </div>
+{% endif %}
 {% endblock %}
+

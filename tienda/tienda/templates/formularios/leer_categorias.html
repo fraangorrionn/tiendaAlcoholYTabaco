@@ -1,46 +1,61 @@
 {% extends 'principal.html' %}
-
 {% block title %}Lista de Categorías{% endblock %}
 
 {% block contenido %}
 <div class="container mt-5">
     <h1>Lista de Categorías</h1>
 
-    <!-- Formulario de búsqueda avanzada -->
-    <form method="get" class="mb-4">
-        {{ formulario.as_p }}
-        <button type="submit" class="btn btn-primary mt-3">Buscar</button>
-    </form>
+    <!-- Verificación de permiso para ver la lista de categorías -->
+    {% if perms.tienda.view_categoria %}
+        <!-- Formulario de búsqueda avanzada -->
+        <form method="get" class="mb-4">
+            {{ formulario.as_p }}
+            <button type="submit" class="btn btn-primary mt-3">Buscar</button>
+        </form>
 
-    <!-- Tabla de categorías -->
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Nombre</th>
-                <th>Descripción</th>
-                <th>Fecha de Creación</th>
-                <th>Estado</th>
-                <th>Prioridad</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for categoria in categorias %}
-            <tr>
-                <td>{{ categoria.nombre }}</td>
-                <td>{{ categoria.descripcion }}</td>
-                <td>{{ categoria.fecha_creacion }}</td>
-                <td>{{ categoria.estado }}</td>
-                <td>{{ categoria.prioridad }}</td>
-                <td>
-                    <a href="{% url 'editar_categoria' categoria.pk %}" class="btn btn-warning btn-sm">Editar</a>
-                    <a href="{% url 'eliminar_categoria' categoria.pk %}" class="btn btn-danger btn-sm">Eliminar</a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <a href="{% url 'crear_categoria' %}" class="btn btn-primary">Crear Categoría</a>
+        <!-- Tabla de categorías -->
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Descripción</th>
+                    <th>Fecha de Creación</th>
+                    <th>Estado</th>
+                    <th>Prioridad</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for categoria in categorias %}
+                <tr>
+                    <td>{{ categoria.nombre }}</td>
+                    <td>{{ categoria.descripcion }}</td>
+                    <td>{{ categoria.fecha_creacion }}</td>
+                    <td>{{ categoria.estado }}</td>
+                    <td>{{ categoria.prioridad }}</td>
+                    <td>
+                        <!-- Verificar permiso para editar categorías -->
+                        {% if perms.tienda.change_categoria %}
+                            <a href="{% url 'editar_categoria' categoria.pk %}"
+                               class="btn btn-warning btn-sm">Editar</a>
+                        {% endif %}
+                        <!-- Verificar permiso para eliminar categorías -->
+                        {% if perms.tienda.delete_categoria %}
+                            <a href="{% url 'eliminar_categoria' categoria.pk %}"
+                               class="btn btn-danger btn-sm">Eliminar</a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Verificar permiso para crear categorías -->
+        {% if perms.tienda.add_categoria %}
+            <a href="{% url 'crear_categoria' %}" class="btn btn-primary">Crear Categoría</a>
+        {% endif %}
+    {% else %}
+        <p>No tienes permisos para ver categorías.</p>
+    {% endif %}
 </div>
 {% endblock %}
-

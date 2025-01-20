@@ -430,6 +430,16 @@ class BusquedaAvanzadaCategoriaForm(forms.Form):
         return cleaned_data
 
 class RegistroUsuarioForm(UserCreationForm):
+    ROLES = (
+        (0, "Seleccione un tipo de rol"),
+        (Usuario.CLIENTE, "Cliente"),
+        (Usuario.GERENTE, "Gerente"),
+    )
+
+    rol = forms.ChoiceField(choices=ROLES)
+    direccion = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Dirección'}))
+    telefono = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Teléfono'}))
+
     class Meta:
         model = Usuario
         fields = ['username', 'email', 'password1', 'password2', 'rol', 'direccion', 'telefono']
@@ -441,41 +451,10 @@ class RegistroUsuarioForm(UserCreationForm):
         telefono = cleaned_data.get('telefono')
 
         # Validaciones según el rol
-        if rol == Usuario.CLIENTE and not direccion:
+        if rol == str(Usuario.CLIENTE) and not direccion:
             self.add_error('direccion', "La dirección es obligatoria para los clientes.")
 
-        if rol == Usuario.GERENTE and not telefono:
+        if rol == str(Usuario.GERENTE) and not telefono:
             self.add_error('telefono', "El teléfono es obligatorio para los gerentes.")
 
         return cleaned_data
-    
-class ProductoProveedorForm(forms.Form):
-    producto = forms.ModelChoiceField(queryset=Producto.objects.none(), label="Producto")
-
-    def __init__(self, *args, **kwargs):
-        self.request = kwargs.pop('request', None)  # Recibimos el request desde la vista
-        super().__init__(*args, **kwargs)
-        if self.request and self.request.user.rol == Usuario.GERENTE:
-            # Filtramos los productos solo para el proveedor logueado
-            self.fields['producto'].queryset = Producto.objects.filter(provedores__id=self.request.user.id)
-            
-class ProductoDinamicoForm(forms.Form):
-    producto = forms.ModelChoiceField(
-        queryset=Producto.objects.none(),
-        label="Producto",
-        widget=forms.Select(attrs={"class": "form-control"}),
-    )
-
-    def __init__(self, *args, **kwargs):
-        self.request = kwargs.pop('request', None)  # Recibir el request desde la vista
-        super().__init__(*args, **kwargs)
-        
-        # Filtrar productos según el rol del usuario logueado
-        if self.request and self.request.user.is_authenticated:
-            if self.request.user.rol == Usuario.CLIENTE:
-                # Mostrar solo los productos favoritos del cliente
-                favoritos = Favoritos.objects.filter(usuario=self.request.user).values_list('producto', flat=True)
-                self.fields['producto'].queryset = Producto.objects.filter(id__in=favoritos)
-            elif self.request.user.rol == Usuario.GERENTE:
-                # Mostrar todos los productos
-                self.fields['producto'].queryset = Producto.objects.all()

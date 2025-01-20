@@ -1,62 +1,72 @@
 {% extends 'principal.html' %}
-
 {% block title %}Lista de Órdenes{% endblock %}
 
 {% block contenido %}
-<div class="container mt-5">
-    <h1>Lista de Órdenes</h1>
+{% if perms.tienda.view_orden %}
+    <div class="container mt-5">
+        <h1>Lista de Órdenes</h1>
 
-    <!-- Formulario de búsqueda avanzada -->
-    <form method="get" class="mb-4">
-        {{ formulario.as_p }}
-        {% if formulario.non_field_errors %}
-            <div class="alert alert-danger">
-                {{ formulario.non_field_errors }}
-            </div>
+        <!-- Formulario de búsqueda avanzada -->
+        <form method="get" class="mb-4">
+            {{ formulario.as_p }}
+            {% if formulario.non_field_errors %}
+                <div class="alert alert-danger">
+                    {{ formulario.non_field_errors }}
+                </div>
+            {% endif %}
+            <button type="submit" class="btn btn-primary mt-3">Buscar</button>
+        </form>
+
+        <!-- Tabla de resultados -->
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Total</th>
+                    <th>Estado</th>
+                    <th>Usuario</th>
+                    <th>Archivo Adjunto</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for orden in ordenes %}
+                <tr>
+                    <td>{{ orden.fecha_orden }}</td>
+                    <td>{{ orden.total }}</td>
+                    <td>{{ orden.estado }}</td>
+                    <td>{{ orden.usuario.nombre }}</td>
+                    <td>
+                        {% if orden.archivo_adjunto %}
+                            <img src="{{ orden.archivo_adjunto.url }}" alt="Archivo Adjunto" style="width: 100px; height: auto;">
+                        {% else %}
+                            No hay archivo
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if perms.tienda.change_orden %}
+                            <a href="{% url 'editar_orden' orden.pk %}" class="btn btn-warning btn-sm">Editar</a>
+                        {% endif %}
+                        {% if perms.tienda.delete_orden %}
+                            <a href="{% url 'eliminar_orden' orden.pk %}" class="btn btn-danger btn-sm">Eliminar</a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center">No se encontraron resultados.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        {% if perms.tienda.add_orden %}
+            <a href="{% url 'crear_orden' %}" class="btn btn-primary">Crear Orden</a>
         {% endif %}
-        <button type="submit" class="btn btn-primary mt-3">Buscar</button>
-    </form>
-
-    <!-- Tabla de resultados -->
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Fecha</th>
-                <th>Total</th>
-                <th>Estado</th>
-                <th>Usuario</th>
-                <th>Archivo Adjunto</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for orden in ordenes %}
-            <tr>
-                <td>{{ orden.fecha_orden }}</td>
-                <td>{{ orden.total }}</td>
-                <td>{{ orden.estado }}</td>
-                <td>{{ orden.usuario.nombre }}</td>
-                <td>
-                    {% if orden.archivo_adjunto %}
-                        <img src="{{ orden.archivo_adjunto.url }}" alt="Archivo Adjunto" style="width: 100px; height: auto;">
-                    {% else %}
-                        No hay archivo
-                    {% endif %}
-                </td>
-                <td>
-                    <a href="{% url 'editar_orden' orden.pk %}" class="btn btn-warning btn-sm">Editar</a>
-                    <a href="{% url 'eliminar_orden' orden.pk %}" class="btn btn-danger btn-sm">Eliminar</a>
-                </td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="6" class="text-center">No se encontraron resultados.</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
-    <a href="{% url 'crear_orden' %}" class="btn btn-primary">Crear Orden</a>
-</div>
+    </div>
+{% else %}
+    <div class="container mt-5">
+        <p>No tienes permisos para ver órdenes.</p>
+    </div>
+{% endif %}
 {% endblock %}
-

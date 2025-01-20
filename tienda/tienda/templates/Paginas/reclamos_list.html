@@ -5,6 +5,7 @@
 {% endblock %}
 
 {% block contenido %}
+{% if perms.tienda.view_reclamo %}
     <div class="container">
         <h1>Lista de Reclamos</h1>
 
@@ -39,4 +40,9 @@
             </tbody>
         </table>
     </div>
+{% else %}
+    <div class="container">
+        <p>No tienes permisos para ver reclamos. Contacta al administrador si necesitas acceso.</p>
+    </div>
+{% endif %}
 {% endblock %}

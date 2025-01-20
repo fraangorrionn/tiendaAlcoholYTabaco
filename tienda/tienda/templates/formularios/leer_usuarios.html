@@ -1,44 +1,58 @@
 {% extends 'principal.html' %}
-
 {% block title %}Lista de Usuarios{% endblock %}
 
 {% block contenido %}
-<div class="container mt-5">
-    <h1>Lista de Usuarios</h1>
+{% if perms.tienda.view_usuario %}
+    <div class="container mt-5">
+        <h1>Lista de Usuarios</h1>
 
-    <!-- Formulario de búsqueda avanzada -->
-    <form method="get" class="mb-4">
-        {{ formulario.as_p }}
-        <button type="submit" class="btn btn-primary mt-3">Buscar</button>
-    </form>
+        <!-- Formulario de búsqueda avanzada -->
+        <form method="get" class="mb-4">
+            {{ formulario.as_p }}
+            <button type="submit" class="btn btn-primary mt-3">Buscar</button>
+        </form>
 
-    <!-- Tabla de resultados -->
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Nombre</th>
-                <th>Correo</th>
-                <th>Dirección</th>
-                <th>Tipo</th>
-                <th>Teléfono</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for usuario in usuarios %}
-            <tr>
-                <td>{{ usuario.nombre }}</td>
-                <td>{{ usuario.correo }}</td>
-                <td>{{ usuario.direccion }}</td>
-                <td>{{ usuario.get_tipo_usuario_display }}</td>
-                <td>{{ usuario.telefono }}</td>
-                <td>
-                    <a href="{% url 'editar_usuario' usuario.pk %}" class="btn btn-warning btn-sm">Editar</a>
-                    <a href="{% url 'eliminar_usuario' usuario.pk %}" class="btn btn-danger btn-sm">Eliminar</a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
+        <!-- Tabla de resultados -->
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Correo</th>
+                    <th>Dirección</th>
+                    <th>Tipo</th>
+                    <th>Teléfono</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for usuario in usuarios %}
+                <tr>
+                    <td>{{ usuario.nombre }}</td>
+                    <td>{{ usuario.correo }}</td>
+                    <td>{{ usuario.direccion }}</td>
+                    <td>{{ usuario.get_tipo_usuario_display }}</td>
+                    <td>{{ usuario.telefono }}</td>
+                    <td>
+                        {% if perms.tienda.change_usuario %}
+                            <a href="{% url 'editar_usuario' usuario.pk %}" class="btn btn-warning btn-sm">Editar</a>
+                        {% endif %}
+                        {% if perms.tienda.delete_usuario %}
+                            <a href="{% url 'eliminar_usuario' usuario.pk %}" class="btn btn-danger btn-sm">Eliminar</a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Botón para crear un nuevo usuario (opcional) -->
+        {% if perms.tienda.add_usuario %}
+            <a href="{% url 'crear_usuario' %}" class="btn btn-primary">Crear Usuario</a>
+        {% endif %}
+    </div>
+{% else %}
+    <div class="container mt-5">
+        <p>No tienes permisos para ver usuarios.</p>
+    </div>
+{% endif %}
 {% endblock %}

@@ -1,10 +1,10 @@
+{% extends "principal.html" %}
+
 {% block contenido %}
 <div class="container">
     <h1>Lista de Usuarios</h1>
-    {% if not user.is_authenticated %}
-        <p>Por favor, <a href="{% url 'login' %}">inicia sesión</a> para ver esta información.</p>
-    {% elif user.rol != 1 %}
-        <p>No tienes permisos para acceder a esta sección.</p>
+    {% if not perms.tienda.view_usuario %}
+        <p>No tienes permisos para acceder a esta sección. Contacta al administrador si necesitas acceso.</p>
     {% else %}
         <table>
             <thead>

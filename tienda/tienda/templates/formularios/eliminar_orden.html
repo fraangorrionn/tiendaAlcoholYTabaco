@@ -1,15 +1,21 @@
 {% extends 'principal.html' %}
-
 {% block title %}Eliminar Orden{% endblock %}
 
 {% block contenido %}
-<div class="container mt-5">
-    <h1>Eliminar Orden</h1>
-    <p>¿Estás seguro de que deseas eliminar la orden con fecha <strong>{{ orden.fecha_orden }}</strong>?</p>
-    <form method="post">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-danger">Sí, eliminar</button>
-        <a href="{% url 'lista_ordenes' %}" class="btn btn-secondary">Cancelar</a>
-    </form>
-</div>
+{% if perms.tienda.delete_orden %}
+    <div class="container mt-5">
+        <h1>Eliminar Orden</h1>
+        <p>¿Estás seguro de que deseas eliminar la orden con fecha <strong>{{ orden.fecha_orden }}</strong>?</p>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Sí, eliminar</button>
+            <a href="{% url 'lista_ordenes' %}" class="btn btn-secondary">Cancelar</a>
+        </form>
+    </div>
+{% else %}
+    <div class="container mt-5">
+        <p>No tienes permisos para eliminar órdenes. Contacta al administrador si necesitas acceso.</p>
+    </div>
+{% endif %}
 {% endblock %}
+

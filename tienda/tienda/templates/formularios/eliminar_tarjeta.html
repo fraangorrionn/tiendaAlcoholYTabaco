@@ -1,15 +1,20 @@
 {% extends 'principal.html' %}
-
 {% block title %}Eliminar Tarjeta{% endblock %}
 
 {% block contenido %}
-<div class="container mt-5">
-    <h1>Eliminar Tarjeta</h1>
-    <p>¿Estás seguro de que deseas eliminar la tarjeta del usuario <strong>{{ tarjeta.usuario.nombre }}</strong>?</p>
-    <form method="post">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-danger">Sí, eliminar</button>
-        <a href="{% url 'lista_tarjetas' %}" class="btn btn-secondary">Cancelar</a>
-    </form>
-</div>
+{% if perms.tienda.delete_tarjeta %}
+    <div class="container mt-5">
+        <h1>Eliminar Tarjeta</h1>
+        <p>¿Estás seguro de que deseas eliminar la tarjeta del usuario <strong>{{ tarjeta.usuario.nombre }}</strong>?</p>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Sí, eliminar</button>
+            <a href="{% url 'lista_tarjetas' %}" class="btn btn-secondary">Cancelar</a>
+        </form>
+    </div>
+{% else %}
+    <div class="container mt-5">
+        <p>No tienes permisos para eliminar tarjetas. Contacta al administrador si necesitas acceso.</p>
+    </div>
+{% endif %}
 {% endblock %}

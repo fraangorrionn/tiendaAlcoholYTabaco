@@ -5,6 +5,7 @@
 {% endblock %}
 
 {% block contenido %}
+{% if perms.tienda.view_categoria %}
     <div class="container">
         <h1>Lista de Categorías</h1>
         <table>
@@ -31,4 +32,10 @@
             </tbody>
         </table>
     </div>
+{% else %}
+    <div class="container">
+        <p>No tienes permisos para ver categorías. Contacta al administrador si necesitas acceso.</p>
+    </div>
+{% endif %}
 {% endblock %}
+

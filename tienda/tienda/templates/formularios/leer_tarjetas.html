@@ -1,44 +1,55 @@
 {% extends 'principal.html' %}
-
 {% block title %}Lista de Tarjetas{% endblock %}
 
 {% block contenido %}
-<div class="container mt-5">
-    <h1>Lista de Tarjetas</h1>
+{% if perms.tienda.view_tarjeta %}
+    <div class="container mt-5">
+        <h1>Lista de Tarjetas</h1>
 
-    <!-- Formulario de búsqueda avanzada -->
-    <form method="get" class="mb-4">
-        {{ formulario.as_p }}
-        <button type="submit" class="btn btn-primary mt-3">Buscar</button>
-    </form>
+        <!-- Formulario de búsqueda avanzada -->
+        <form method="get" class="mb-4">
+            {{ formulario.as_p }}
+            <button type="submit" class="btn btn-primary mt-3">Buscar</button>
+        </form>
 
-    <!-- Tabla de resultados -->
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Usuario</th>
-                <th>Número de Tarjeta</th>
-                <th>Fecha de Expiración</th>
-                <th>Tipo</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for tarjeta in tarjetas %}
-            <tr>
-                <td>{{ tarjeta.usuario.nombre }}</td>
-                <td>{{ tarjeta.numero_tarjeta }}</td>
-                <td>{{ tarjeta.fecha_expiracion }}</td>
-                <td>{{ tarjeta.tipo }}</td>
-                <td>
-                    <a href="{% url 'editar_tarjeta' tarjeta.pk %}" class="btn btn-warning btn-sm">Editar</a>
-                    <a href="{% url 'eliminar_tarjeta' tarjeta.pk %}" class="btn btn-danger btn-sm">Eliminar</a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <a href="{% url 'crear_tarjeta' %}" class="btn btn-primary">Crear Tarjeta</a>
-</div>
+        <!-- Tabla de resultados -->
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Usuario</th>
+                    <th>Número de Tarjeta</th>
+                    <th>Fecha de Expiración</th>
+                    <th>Tipo</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for tarjeta in tarjetas %}
+                <tr>
+                    <td>{{ tarjeta.usuario.nombre }}</td>
+                    <td>{{ tarjeta.numero_tarjeta }}</td>
+                    <td>{{ tarjeta.fecha_expiracion }}</td>
+                    <td>{{ tarjeta.tipo }}</td>
+                    <td>
+                        {% if perms.tienda.change_tarjeta %}
+                            <a href="{% url 'editar_tarjeta' tarjeta.pk %}" class="btn btn-warning btn-sm">Editar</a>
+                        {% endif %}
+                        {% if perms.tienda.delete_tarjeta %}
+                            <a href="{% url 'eliminar_tarjeta' tarjeta.pk %}" class="btn btn-danger btn-sm">Eliminar</a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        {% if perms.tienda.add_tarjeta %}
+            <a href="{% url 'crear_tarjeta' %}" class="btn btn-primary">Crear Tarjeta</a>
+        {% endif %}
+    </div>
+{% else %}
+    <div class="container mt-5">
+        <p>No tienes permisos para ver tarjetas.</p>
+    </div>
+{% endif %}
 {% endblock %}
-

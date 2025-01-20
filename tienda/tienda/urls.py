@@ -42,10 +42,10 @@ urlpatterns = [
     path('ordenes/eliminar_orden/<int:pk>/', views.eliminar_orden, name='eliminar_orden'),
     
     # Formularios - Proveedores
-    path('provedores/crear_provedor/', views.crear_provedor, name='crear_provedor'),
-    path('provedores/leer_proveedores/', views.leer_provedores, name='leer_proveedores'),
-    path('provedores/editar_provedor/<int:pk>/', views.editar_provedor, name='editar_provedor'),
-    path('provedores/eliminar_provedor/<int:pk>/', views.eliminar_provedor, name='eliminar_provedor'),
+    path('provedores/crear_proveedor/', views.crear_proveedor, name='crear_provedor'),
+    path('provedores/leer_proveedores/', views.leer_proveedores, name='leer_proveedores'),
+    path('provedores/editar_proveedor/<int:pk>/', views.editar_proveedor, name='editar_provedor'),
+    path('provedores/eliminar_proveedor/<int:pk>/', views.eliminar_proveedor, name='eliminar_provedor'),
     
     # Formularios - Inventarios
     path('inventarios/crear_inventario/', views.crear_inventario, name='crear_inventario'),
@@ -65,11 +65,19 @@ urlpatterns = [
     path('categorias/editar_categoria/<int:pk>/', views.editar_categoria, name='editar_categoria'),
     path('categorias/eliminar_categoria/<int:pk>/', views.eliminar_categoria, name='eliminar_categoria'),
 
-    #Contraseñas
+    #Contraseñas y registro
     path('password_reset/', auth_views.PasswordResetView.as_view(template_name='registro/password_reset.html'), name='password_reset'),
     path('password_reset_done/', auth_views.PasswordResetDoneView.as_view(template_name='registro/password_reset_done.html'), name='password_reset_done'),
     path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name='registro/password_reset_confirm.html'), name='password_reset_confirm'),
     path('reset_done/', auth_views.PasswordResetCompleteView.as_view(template_name='registro/password_reset_complete.html'), name='password_reset_complete'),
-    path('registro/', views.registro_usuario, name='registro_usuario'),  # Define la URL de registro
+    path('registro/', views.registro_usuario, name='registro_usuario'),
+    path('login/', auth_views.LoginView.as_view(template_name='registro/login.html'), name='login'),
+
 
 ]
+
+# Configurar manejadores de errores personalizados
+handler404 = 'tienda.views.handler_404'
+handler500 = 'tienda.views.handler_500'
+handler403 = 'tienda.views.handler_403'
+handler400 = 'tienda.views.handler_400'

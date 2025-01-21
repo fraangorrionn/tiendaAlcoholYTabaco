@@ -632,6 +632,10 @@ Tienda | detalle orden | Can view detalle orden
 Tienda | favoritos | Can add favoritos
 Tienda | favoritos | Can view favoritos
 
+# Fixtures
+Utilizo python manage.py dumpdata auth.group auth.permission --indent 4 > tienda/fixtures/grupos_y_permisos.json
+para crearme los grupos y permisos
+
 
 ------Comando-------
 python3 -m venv myvenv

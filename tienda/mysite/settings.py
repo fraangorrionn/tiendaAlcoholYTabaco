@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'moment',
     'crispy_forms',
     'crispy_bootstrap5',
+    'rest_framework',
 
 ]
 

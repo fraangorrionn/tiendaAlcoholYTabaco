@@ -24,6 +24,7 @@ urlpatterns = [
     path("__debug__/", include("debug_toolbar.urls")),
     path('', include('tienda.urls')),
     path('api/v1/', include("tienda.api_urls")),
+    path('oauth2/', include('oauth2_provider.urls', namespace='oauth2_provider'))
 ]
 
 from django.conf.urls import handler404, handler500, handler403, handler400

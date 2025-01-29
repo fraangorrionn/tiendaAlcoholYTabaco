@@ -31,12 +31,14 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 env = environ.Env()
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
-SECRET_KEY = env('django-insecure-dc+=@e_!%q-^vb3=zkru7*iohorkqoenza!^6d3y2t6$cjz*jw')
+SECRET_KEY = env('SECRET_KEY', default='fallback-secret-key')
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['fraangorrionn.pythonanywhere.com']
+ALLOWED_HOSTS = ['fraangorrionn.pythonanywhere.com', 'localhost', '127.0.0.1']
+
 INTERNAL_IPS = ["127.0.0.1"]
 
 # Application definition

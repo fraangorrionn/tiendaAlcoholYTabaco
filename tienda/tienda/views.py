@@ -9,6 +9,7 @@ from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.models import Group
 from django.contrib.auth import logout
 from django.utils.timezone import now
+from django.contrib.auth.models import Permission
 
 
 def index(request):
@@ -428,15 +429,31 @@ def registro_usuario(request):
     if request.method == 'POST':
         form = RegistroUsuarioForm(request.POST)
         if form.is_valid():
-            usuario = form.save()  # Guardar el usuario en la base de datos
-            asignar_grupo(usuario)  # Llamar a la función para asignar el grupo
+            usuario = form.save(commit=False)  # Evita el guardado inmediato
+            usuario.save()  # Guarda después de realizar validaciones
+            asignar_permisos(usuario)  # Asigna los permisos adecuados
             return redirect('login')  # Redirigir al login tras el registro exitoso
     else:
         form = RegistroUsuarioForm()
 
     return render(request, 'registro/registro_usuario.html', {'formulario': form})
 
+def asignar_permisos(usuario):
+    """Asigna los permisos correspondientes según el rol del usuario."""
+    permisos_cliente = ['view_producto', 'add_orden']  # Corrige los permisos
+    permisos_gerente = ['view_orden', 'change_producto']
 
+    if usuario.rol == Usuario.CLIENTE:
+        for permiso in permisos_cliente:
+            permiso_obj = Permission.objects.filter(codename=permiso).first()
+            if permiso_obj:
+                usuario.user_permissions.add(permiso_obj)
+
+    elif usuario.rol == Usuario.GERENTE:
+        for permiso in permisos_gerente:
+            permiso_obj = Permission.objects.filter(codename=permiso).first()
+            if permiso_obj:
+                usuario.user_permissions.add(permiso_obj)
 def logout_view(request):
     logout(request)
     request.session.flush()  # Elimina todas las variables de sesión

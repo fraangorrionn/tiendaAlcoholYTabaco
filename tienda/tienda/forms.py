@@ -431,14 +431,23 @@ class BusquedaAvanzadaCategoriaForm(forms.Form):
 
 class RegistroUsuarioForm(UserCreationForm):
     ROLES = (
-        (0, "Seleccione un tipo de rol"),
         (Usuario.CLIENTE, "Cliente"),
         (Usuario.GERENTE, "Gerente"),
     )
 
-    rol = forms.ChoiceField(choices=ROLES)
-    direccion = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Dirección'}))
-    telefono = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Teléfono'}))
+    rol = forms.ChoiceField(
+        choices=ROLES, 
+        required=True, 
+        widget=forms.Select(attrs={'class': 'form-select'})
+    )
+    direccion = forms.CharField(
+        required=False, 
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Dirección'})
+    )
+    telefono = forms.CharField(
+        required=False, 
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Teléfono'})
+    )
 
     class Meta:
         model = Usuario
@@ -450,7 +459,7 @@ class RegistroUsuarioForm(UserCreationForm):
         direccion = cleaned_data.get('direccion')
         telefono = cleaned_data.get('telefono')
 
-        # Validaciones según el rol
+        # Validación según el rol
         if rol == str(Usuario.CLIENTE) and not direccion:
             self.add_error('direccion', "La dirección es obligatoria para los clientes.")
 

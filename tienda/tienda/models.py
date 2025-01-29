@@ -43,6 +43,13 @@ class Producto(models.Model):
         through='ProductoCategoria',
         related_name='productos'
     )
+    class Meta:
+        permissions = [
+            ("ver_productos", "Puede ver productos"),
+            ("hacer_pedido", "Puede hacer pedidos"),
+            ("ver_ordenes", "Puede ver órdenes"),
+            ("gestionar_productos", "Puede gestionar productos"),
+        ]
 
     def __str__(self):
         return self.nombre

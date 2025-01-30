@@ -11,10 +11,18 @@ from rest_framework.permissions import IsAuthenticated
 
 @api_view(['GET'])
 def lista_ordenes(request):
-    if request.user.rol == Usuario.CLIENTE:
-        ordenes = Orden.objects.filter(usuario=request.user).select_related('usuario').order_by('-fecha_orden')[:10]
-    else:
-        ordenes = Orden.objects.select_related('usuario').order_by('-fecha_orden')[:10]
-    #serializer = LibroSerializer(libros, many=True)
+    ordenes = Orden.objects.all()
     serializer = OrdenSerializer(ordenes, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def lista_productos(request):
+    productos = Producto.objects.all()
+    serializer = ProductoSerializer(productos, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def lista_usuarios(request):
+    usuarios = Usuario.objects.all()
+    serializer = UsuarioSerializer(usuarios, many=True)
     return Response(serializer.data)

@@ -1,0 +1,26 @@
+{% extends "principal.html" %}
+{% block contenido %}
+    <h1 class="display-3">Lista de Productos</h1>
+
+    <div class="row">
+        {% for producto in productos_mostrar %}
+            <div class="col-sm-4 mb-2">
+                <p><strong>Nombre:</strong> {{ producto.nombre }}</p>
+                <p><strong>Precio:</strong> ${{ producto.precio }}</p>
+                <p><strong>Tipo:</strong> {{ producto.tipo }}</p>
+                <p><strong>Stock:</strong> {{ producto.stock }}</p>
+                <p><strong>Descripción:</strong> {{ producto.descripcion|default:"Sin descripción" }}</p>
+                <p><strong>Tiempo Estimado de Envío:</strong> {{ producto.tiempo_estimado_envio|default:"No especificado" }}</p>
+                <p><strong>Categorías:</strong> 
+                    {% for categoria in producto.categorias.all %}
+                        {{ categoria.nombre }}{% if not forloop.last %}, {% endif %}
+                    {% empty %}
+                        No asignado
+                    {% endfor %}
+                </p>
+            </div>
+        {% empty %}
+            <h1>No hay productos disponibles</h1>
+        {% endfor %}
+    </div>
+{% endblock %}

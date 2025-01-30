@@ -1,0 +1,30 @@
+{% extends "principal.html" %}
+{% block contenido %}
+    <h1 class="display-3">Lista de Usuarios</h1>
+
+    <div class="row">
+        {% for usuario in usuarios_mostrar %}
+            <div class="col-sm-4 mb-2">
+                <p><strong>Nombre de Usuario:</strong> {{ usuario.username }}</p>
+                <p><strong>Email:</strong> {{ usuario.email }}</p>
+                <p><strong>Rol:</strong> 
+                    {% if usuario.rol == 1 %} Administrador
+                    {% elif usuario.rol == 2 %} Cliente
+                    {% elif usuario.rol == 3 %} Gerente
+                    {% else %} Desconocido {% endif %}
+                </p>
+                <p><strong>Teléfono:</strong> {{ usuario.telefono|default:"No especificado" }}</p>
+                <p><strong>Dirección:</strong> {{ usuario.direccion|default:"No especificado" }}</p>
+                <p><strong>Favoritos:</strong> 
+                    {% for producto in usuario.productos_favoritos.all %}
+                        {{ producto.nombre }}{% if not forloop.last %}, {% endif %}
+                    {% empty %}
+                        No tiene productos favoritos
+                    {% endfor %}
+                </p>
+            </div>
+        {% empty %}
+            <h1>No hay usuarios registrados</h1>
+        {% endfor %}
+    </div>
+{% endblock %}

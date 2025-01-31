@@ -1,28 +1,29 @@
-from .models import *
-from .serializers import *
-from rest_framework.response import Response
-from rest_framework.decorators import api_view,authentication_classes,permission_classes
-from rest_framework import status
-from .forms import *
-from django.db.models import Q,Prefetch
-from django.contrib.auth.models import Group
-from rest_framework.authentication import SessionAuthentication
-from rest_framework.permissions import IsAuthenticated
+from django.shortcuts import render
+from .models import Producto, ProductoCategoria, Inventario
 
-@api_view(['GET'])
-def lista_ordenes(request):
-    ordenes = Orden.objects.all()
-    serializer = OrdenSerializer(ordenes, many=True)
-    return Response(serializer.data)
+def lista_productos_api(request):
+    productos = Producto.objects.all().values('id', 'nombre', 'precio', 'tipo', 'stock')
+    return render(request, 'api/lista_productos_api.html', {'productos': productos})
 
-@api_view(['GET'])
-def lista_productos(request):
+
+def lista_productos_detallada_api(request):
     productos = Producto.objects.all()
-    serializer = ProductoSerializer(productos, many=True)
-    return Response(serializer.data)
+    
+    productos_detallados = []
+    for producto in productos:
+        categorias = ProductoCategoria.objects.filter(producto=producto).select_related('categoria')
+        inventario = Inventario.objects.filter(producto=producto).first()
+        
+        productos_detallados.append({
+            'id': producto.id,
+            'nombre': producto.nombre,
+            'precio': producto.precio,
+            'tipo': producto.tipo,
+            'stock': producto.stock,
+            'categorias': [c.categoria.nombre for c in categorias],
+            'cantidad_disponible': inventario.cantidad_disponible if inventario else 0
+        })
 
-@api_view(['GET'])
-def lista_usuarios(request):
-    usuarios = Usuario.objects.all()
-    serializer = UsuarioSerializer(usuarios, many=True)
-    return Response(serializer.data)
+    return render(request, 'api/lista_productos_detallada_api.html', {'productos': productos_detallados})
+
+

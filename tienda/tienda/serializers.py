@@ -1,17 +1,24 @@
 from rest_framework import serializers
-from .models import Orden, Producto, Usuario
-
-class OrdenSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Orden
-        fields = '__all__'
+from .models import Producto, Categoria, ProductoCategoria, Inventario
 
 class ProductoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Producto
-        fields = '__all__'
+        fields = ['id', 'nombre', 'precio', 'tipo', 'stock']
 
-class UsuarioSerializer(serializers.ModelSerializer):
+
+class ProductoDetalleSerializer(serializers.ModelSerializer):
+    categorias = serializers.SerializerMethodField()
+    cantidad_disponible = serializers.SerializerMethodField()
+
     class Meta:
-        model = Usuario
-        fields = ['id', 'username', 'email', 'rol', 'telefono', 'direccion']
+        model = Producto
+        fields = ['id', 'nombre', 'precio', 'tipo', 'stock', 'categorias', 'cantidad_disponible']
+
+    def get_categorias(self, obj):
+        categorias = ProductoCategoria.objects.filter(producto=obj).select_related('categoria')
+        return [categoria.categoria.nombre for categoria in categorias]
+
+    def get_cantidad_disponible(self, obj):
+        inventario = Inventario.objects.filter(producto=obj).first()
+        return inventario.cantidad_disponible if inventario else 0

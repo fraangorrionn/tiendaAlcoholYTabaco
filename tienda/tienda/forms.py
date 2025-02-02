@@ -3,7 +3,7 @@ from django.forms import ModelForm
 from .models import *
 from django.core.exceptions import ValidationError
 import re
-from .models import Usuario, Producto, Orden, Provedor
+from .models import Usuario, Producto, Orden, Proveedor
 from datetime import date
 import datetime
 from django.contrib.auth.forms import UserCreationForm
@@ -150,9 +150,9 @@ class BusquedaAvanzadaOrdenForm(forms.Form):
 
 
 
-class ProvedorModelForm(forms.ModelForm):
+class ProveedorModelForm(forms.ModelForm):
     class Meta:
-        model = Provedor
+        model = Proveedor
         fields = ['nombre', 'contacto', 'telefono', 'correo', 'productos']
         labels = {
             'nombre': 'Nombre del Proveedor',
@@ -176,13 +176,13 @@ class ProvedorModelForm(forms.ModelForm):
         correo = cleaned_data.get('correo')
         productos = cleaned_data.get('productos')
 
-        if nombre and Provedor.objects.filter(nombre=nombre).exists():
+        if nombre and Proveedor.objects.filter(nombre=nombre).exists():
             self.add_error('nombre', "Ya existe un proveedor con este nombre.")
 
         if telefono and not re.match(r'^\+?\d{7,15}$', telefono):
             self.add_error('telefono', "El teléfono debe tener entre 7 y 15 dígitos y puede incluir un prefijo '+'.")
 
-        if correo and Provedor.objects.filter(correo=correo).exists():
+        if correo and Proveedor.objects.filter(correo=correo).exists():
             self.add_error('correo', "Ya existe un proveedor con este correo electrónico.")
 
         if not productos:
@@ -192,7 +192,7 @@ class ProvedorModelForm(forms.ModelForm):
 
 
         
-class BusquedaAvanzadaProvedorForm(forms.Form):
+class BusquedaAvanzadaProveedorForm(forms.Form):
     nombre = forms.CharField(
         required=False,
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Buscar por nombre'})

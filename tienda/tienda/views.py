@@ -1,7 +1,7 @@
 from django.db.models import Q, Count, Sum, F , Prefetch
 from django.utils import timezone
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Usuario, Producto, Orden, DetalleOrden, Provedor, Inventario, Tarjeta, Favoritos, Reclamo, Categoria, ProductoCategoria
+from .models import Usuario, Producto, Orden, DetalleOrden, Proveedor, Inventario, Tarjeta, Favoritos, Reclamo, Categoria, ProductoCategoria
 from .forms import *
 from django.contrib import messages
 from django.contrib.auth import login
@@ -61,9 +61,9 @@ def lista_detalles_orden(request):
     return render(request, 'Paginas/detalles_orden_list.html', {'detalles': detalles})
 
 # LISTA DE PROVEEDORES
-@permission_required('tienda.view_provedor')
+@permission_required('tienda.view_proveedor')
 def lista_proveedores(request):
-    proveedores = Provedor.objects.prefetch_related('productos')
+    proveedores = Proveedor.objects.prefetch_related('productos')
     return render(request, 'Paginas/proveedor_list.html', {'proveedores': proveedores})
 
 # LISTA DE INVENTARIOS
@@ -288,35 +288,35 @@ def eliminar_orden(request, pk):
         return redirect('leer_ordenes')
     return render(request, 'formularios/eliminar_orden.html', {'orden': orden})
 
-@permission_required('tienda.add_provedor')
+@permission_required('tienda.add_proveedor')
 def crear_proveedor(request):
-    formulario = ProvedorModelForm(request.POST or None)
+    formulario = ProveedorModelForm(request.POST or None)
     if formulario.is_valid():
         formulario.save()
         return redirect('lista_proveedores')
-    return render(request, 'formularios/crear_provedor.html', {'formulario': formulario})
+    return render(request, 'formularios/crear_proveedor.html', {'formulario': formulario})
 
-@permission_required('tienda.view_provedor')
+@permission_required('tienda.view_proveedor')
 def leer_proveedores(request):
-    proveedores = Provedor.objects.all()
-    return render(request, 'formularios/leer_proveedores.html', {'provedores': proveedores})
+    proveedores = Proveedor.objects.all()
+    return render(request, 'formularios/leer_proveedores.html', {'proveedores': proveedores})
 
-@permission_required('tienda.change_provedor')
+@permission_required('tienda.change_proveedor')
 def editar_proveedor(request, pk):
-    provedor = get_object_or_404(Provedor, pk=pk)
-    formulario = ProvedorModelForm(request.POST or None, instance=provedor)
+    proveedor = get_object_or_404(Proveedor, pk=pk)
+    formulario = ProveedorModelForm(request.POST or None, instance=proveedor)
     if formulario.is_valid():
         formulario.save()
         return redirect('leer_proveedores')
-    return render(request, 'formularios/editar_provedor.html', {'formulario': formulario, 'provedor': provedor})
+    return render(request, 'formularios/editar_proveedor.html', {'formulario': formulario, 'proveedor': proveedor})
 
-@permission_required('tienda.delete_provedor')
+@permission_required('tienda.delete_proveedor')
 def eliminar_proveedor(request, pk):
-    provedor = get_object_or_404(Provedor, pk=pk)
+    proveedor = get_object_or_404(Proveedor, pk=pk)
     if request.method == 'POST':
-        provedor.delete()
+        proveedor.delete()
         return redirect('leer_proveedores')
-    return render(request, 'formularios/eliminar_provedor.html', {'provedor': provedor})
+    return render(request, 'formularios/eliminar_proveedor.html', {'proveedor': proveedor})
 
 # CRUD para Inventarios
 

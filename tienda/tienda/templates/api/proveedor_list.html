@@ -1,0 +1,29 @@
+{% extends "principal.html" %}
+
+{% block contenido %}
+    <h1 class="display-3">Lista de Proveedores</h1>
+
+    <div class="row">
+        {% for proveedor in proveedores %}
+            <div class="col-sm-6 mb-2">
+                <div class="card p-3">
+                    <p><strong>Nombre:</strong> {{ proveedor.nombre }}</p>
+                    <p><strong>Contacto:</strong> {{ proveedor.contacto }}</p>
+                    <p><strong>Teléfono:</strong> {{ proveedor.telefono }}</p>
+                    <p><strong>Productos Suministrados:</strong></p>
+                    <ul>
+                        {% for producto in proveedor.productos %}
+                            <li>{{ producto }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        {% empty %}
+            <h1>No hay proveedores registrados.</h1>
+        {% endfor %}
+    </div>
+
+    <div class="mt-4">
+        <a href="{% url 'producto_listar_api' %}" class="btn btn-secondary">Volver a Productos</a>
+    </div>
+{% endblock %}

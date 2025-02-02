@@ -2,7 +2,7 @@
 {% block title %}Lista de Proveedores{% endblock %}
 
 {% block contenido %}
-{% if perms.tienda.view_provedor %}
+{% if perms.tienda.view_proveedor %}
     <div class="container mt-5">
         <h1>Lista de Proveedores</h1>
 
@@ -24,18 +24,18 @@
                 </tr>
             </thead>
             <tbody>
-                {% for provedor in provedores %}
+                {% for proveedor in proveedores %}
                 <tr>
-                    <td>{{ provedor.nombre }}</td>
-                    <td>{{ provedor.contacto }}</td>
-                    <td>{{ provedor.telefono }}</td>
-                    <td>{{ provedor.correo }}</td>
+                    <td>{{ proveedor.nombre }}</td>
+                    <td>{{ proveedor.contacto }}</td>
+                    <td>{{ proveedor.telefono }}</td>
+                    <td>{{ proveedor.correo }}</td>
                     <td>
-                        {% if perms.tienda.change_provedor %}
-                            <a href="{% url 'editar_provedor' provedor.pk %}" class="btn btn-warning btn-sm">Editar</a>
+                        {% if perms.tienda.change_proveedor %}
+                            <a href="{% url 'editar_proveedor' proveedor.pk %}" class="btn btn-warning btn-sm">Editar</a>
                         {% endif %}
                         {% if perms.tienda.delete_provedor %}
-                            <a href="{% url 'eliminar_provedor' provedor.pk %}" class="btn btn-danger btn-sm">Eliminar</a>
+                            <a href="{% url 'eliminar_proveedor' proveedor.pk %}" class="btn btn-danger btn-sm">Eliminar</a>
                         {% endif %}
                     </td>
                 </tr>
@@ -43,8 +43,8 @@
             </tbody>
         </table>
 
-        {% if perms.tienda.add_provedor %}
-            <a href="{% url 'crear_provedor' %}" class="btn btn-primary">Crear Proveedor</a>
+        {% if perms.tienda.add_proveedor %}
+            <a href="{% url 'crear_proveedor' %}" class="btn btn-primary">Crear Proveedor</a>
         {% endif %}
     </div>
 {% else %}

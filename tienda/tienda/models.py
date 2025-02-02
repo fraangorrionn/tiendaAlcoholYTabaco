@@ -90,12 +90,12 @@ class DetalleOrden(models.Model):
         return f"Detalle de Orden {self.orden.id} - Producto: {self.producto.nombre}"
 
 
-class Provedor(models.Model):
+class Proveedor(models.Model):  # Corregido
     nombre = models.CharField(max_length=100)
     contacto = models.CharField(max_length=100)
     telefono = models.CharField(max_length=15)
     correo = models.EmailField(blank=True)
-    productos = models.ManyToManyField(Producto, related_name='provedores', blank=True)
+    productos = models.ManyToManyField(Producto, related_name='proveedores', blank=True)
 
     def __str__(self):
         return self.nombre

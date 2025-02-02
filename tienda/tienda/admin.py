@@ -4,7 +4,7 @@ from .models import (
     Producto, 
     Orden, 
     DetalleOrden, 
-    Provedor, 
+    Proveedor, 
     Inventario, 
     Tarjeta, 
     Favoritos, 
@@ -18,7 +18,7 @@ admin.site.register(Usuario)
 admin.site.register(Producto)
 admin.site.register(Orden)
 admin.site.register(DetalleOrden)
-admin.site.register(Provedor)
+admin.site.register(Proveedor)
 admin.site.register(Inventario)
 admin.site.register(Tarjeta)
 admin.site.register(Favoritos)

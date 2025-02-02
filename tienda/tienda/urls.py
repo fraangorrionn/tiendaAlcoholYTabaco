@@ -42,10 +42,10 @@ urlpatterns = [
     path('ordenes/eliminar_orden/<int:pk>/', views.eliminar_orden, name='eliminar_orden'),
     
     # Formularios - Proveedores
-    path('provedores/crear_proveedor/', views.crear_proveedor, name='crear_provedor'),
-    path('provedores/leer_proveedores/', views.leer_proveedores, name='leer_proveedores'),
-    path('provedores/editar_proveedor/<int:pk>/', views.editar_proveedor, name='editar_provedor'),
-    path('provedores/eliminar_proveedor/<int:pk>/', views.eliminar_proveedor, name='eliminar_provedor'),
+    path('proveedores/crear_proveedor/', views.crear_proveedor, name='crear_proveedor'),
+    path('proveedores/leer_proveedores/', views.leer_proveedores, name='leer_proveedores'),
+    path('proveedores/editar_proveedor/<int:pk>/', views.editar_proveedor, name='editar_proveedor'),
+    path('proveedores/eliminar_proveedor/<int:pk>/', views.eliminar_proveedor, name='eliminar_proveedor'),
     
     # Formularios - Inventarios
     path('inventarios/crear_inventario/', views.crear_inventario, name='crear_inventario'),

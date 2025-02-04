@@ -54,3 +54,15 @@ class ReclamoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Reclamo
         fields = ['id', 'usuario', 'usuario_nombre', 'producto_nombre', 'descripcion', 'fecha', 'estado', 'respuesta']
+        
+class BusquedaProductoSerializer(serializers.Serializer):
+    nombre = serializers.CharField(required=False, max_length=100)
+    tipo = serializers.ChoiceField(choices=Producto.TIPO_PRODUCTO, required=False)
+    precio_min = serializers.DecimalField(required=False, max_digits=10, decimal_places=2)
+    precio_max = serializers.DecimalField(required=False, max_digits=10, decimal_places=2)
+
+    def validate(self, data):
+        if 'precio_min' in data and 'precio_max' in data:
+            if data['precio_min'] > data['precio_max']:
+                raise serializers.ValidationError("El precio mínimo no puede ser mayor que el máximo.")
+        return data

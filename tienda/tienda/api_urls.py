@@ -9,7 +9,6 @@ from tienda.api_view import (
     busqueda_avanzada_producto,
     busqueda_avanzada_orden,
     busqueda_avanzada_proveedor,
-    
 )
 
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
@@ -25,9 +24,9 @@ urlpatterns = [
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     
+    #----------------------------------------------Formularios---------------------------------------------------------------
     path('productos/busqueda/', busqueda_simple_producto, name='busqueda_simple_producto'),
     path('productos/busqueda-avanzada/', busqueda_avanzada_producto, name='busqueda_avanzada_producto'),
     path('ordenes/busqueda-avanzada/', busqueda_avanzada_orden, name='busqueda_avanzada_orden'),
     path('proveedores/busqueda-avanzada/', busqueda_avanzada_proveedor, name='busqueda_avanzada_proveedor'),
-
 ]

@@ -64,6 +64,8 @@ def reclamo_list_view(request):
     serializer = ReclamoSerializer(reclamos, many=True)
     return Response(serializer.data)
 
+#----------------------------------------------Formularios---------------------------------------------------------------
+
 # ---------------------- Búsqueda Simple de Producto ---------------------- #
 @api_view(['GET'])
 def busqueda_simple_producto(request):

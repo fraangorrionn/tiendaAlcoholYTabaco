@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
-import environ
+
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -28,16 +28,13 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # SECURITY WARNING: keep the secret key used in production secret!
 
-env = environ.Env()
-environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
-
-SECRET_KEY = env('SECRET_KEY', default='fallback-secret-key')
+SECRET_KEY='django-insecure-dc+=@e_!%q-^vb3=zkru7*iohorkqoenza!^6d3y2t6$cjz*jw'
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['fraangorrionn.pythonanywhere.com', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['fraangorrionn.pythonanywhere.com', 'localhost', '0.0.0.0']
 
 INTERNAL_IPS = ["127.0.0.1"]
 

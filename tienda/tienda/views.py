@@ -29,6 +29,8 @@ def index(request):
 
     return render(request, 'index.html')
 
+
+
 # LISTA DE USUARIOS
 @permission_required('tienda.view_usuario')
 def lista_usuarios(request):

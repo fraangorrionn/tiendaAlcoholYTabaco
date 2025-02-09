@@ -34,7 +34,8 @@ SECRET_KEY='django-insecure-dc+=@e_!%q-^vb3=zkru7*iohorkqoenza!^6d3y2t6$cjz*jw'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['fraangorrionn.pythonanywhere.com', 'localhost', '0.0.0.0']
+ALLOWED_HOSTS = ['fraangorrionn.pythonanywhere.com', 'localhost', '127.0.0.1', '0.0.0.0']
+
 
 INTERNAL_IPS = ["127.0.0.1"]
 
@@ -173,6 +174,7 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ),
 }
+LOGIN_URL = '/login/'
 
 from datetime import timedelta
 

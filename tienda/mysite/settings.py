@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     'crispy_bootstrap5',
     'rest_framework',
     'oauth2_provider',
+    
 
 ]
 

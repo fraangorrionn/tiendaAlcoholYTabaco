@@ -66,3 +66,66 @@ class BusquedaProductoSerializer(serializers.Serializer):
             if data['precio_min'] > data['precio_max']:
                 raise serializers.ValidationError("El precio mínimo no puede ser mayor que el máximo.")
         return data
+
+
+#---------------------------------------------------------POST-------------------------------------------------------
+
+class ProductoCreateSerializer(serializers.ModelSerializer):
+
+    TIPO_PRODUCTO_OPCIONES = [("", "Ninguno")] + Producto.TIPO_PRODUCTO
+    tipo = serializers.ChoiceField(choices=TIPO_PRODUCTO_OPCIONES)
+
+    class Meta:
+        model = Producto
+        fields = ['nombre', 'precio', 'tipo', 'stock', 'descripcion']
+
+    def validate_nombre(self, nombre):
+        # Validar que el nombre del producto no esté vacío y no se repita.
+        
+        if not nombre.strip():
+            raise serializers.ValidationError("El nombre del producto no puede estar vacío.")
+
+        existe_nombre = Producto.objects.filter(nombre=nombre).first()
+        if existe_nombre:
+            if self.instance and existe_nombre.id == self.instance.id:
+                pass
+            else:
+                raise serializers.ValidationError("Ya existe un producto con ese nombre.")
+        return nombre
+
+    def validate_precio(self, precio):
+        # Validar que el precio sea mayor que 0.
+        
+        if precio <= 0:
+            raise serializers.ValidationError("El precio debe ser mayor que 0.")
+        return precio
+
+    def validate_stock(self, stock):
+        # Validar que el stock sea un número positivo.
+        
+        if stock < 0:
+            raise serializers.ValidationError("El stock no puede ser negativo.")
+        return stock
+
+    def validate_tipo(self, tipo):
+        # Validar que el tipo de producto sea una opción válida.
+        
+        if tipo == "":
+            raise serializers.ValidationError("Debes seleccionar un tipo de producto.")
+        return tipo
+
+#---------------------------------------------------------PATCH-------------------------------------------------------
+
+class ProductoActualizarNombreSerializer(serializers.ModelSerializer):
+ 
+    class Meta:
+        model = Producto
+        fields = ['nombre']
+    
+    def validate_nombre(self, nombre):
+        # Validar que el nombre no esté repetido en otro producto.
+        
+        producto_existente = Producto.objects.filter(nombre=nombre).first()
+        if producto_existente and self.instance and producto_existente.id != self.instance.id:
+            raise serializers.ValidationError('Ya existe un producto con ese nombre.')
+        return nombre

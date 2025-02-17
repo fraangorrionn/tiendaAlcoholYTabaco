@@ -4,7 +4,7 @@ from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 from django.db.models import Prefetch, Q
 from .models import Producto, ProductoCategoria, Inventario, Orden, Proveedor, Inventario, Reclamo
-from .serializers import ProductoDetalleSerializer, ProductoSerializer, OrdenSerializer, ProveedorSerializer, ReclamoSerializer
+from .serializers import *
 
 @api_view(['GET'])
 def lista_productos_api(request):
@@ -160,3 +160,89 @@ def busqueda_avanzada_proveedor(request):
 
     serializer = ProveedorSerializer(proveedores, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+#--------------------------------------Formularios POST------------------------------------------------
+@api_view(['POST'])
+def crear_producto_api(request): 
+    # Crea un nuevo producto con validaciones personalizadas.
+
+    productoCreateSerializer = ProductoCreateSerializer(data=request.data)
+
+    if productoCreateSerializer.is_valid():
+        try:
+            productoCreateSerializer.save()
+            return Response("Producto Creado", status=status.HTTP_201_CREATED)
+
+        except serializers.ValidationError as error:
+            return Response(error.detail, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as error:
+            print(repr(error))  # Se imprime en consola para depuración
+            return Response(repr(error), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    else:
+        print("❌ Errores de validación:", productoCreateSerializer.errors)
+        return Response(productoCreateSerializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+#--------------------------------------Formularios PUT-------------------------------------------------
+@api_view(['PUT'])
+def actualizar_producto_api(request, producto_id):
+    # Actualiza completamente un producto existente.
+
+    try:
+        producto = Producto.objects.get(id=producto_id)
+    except Producto.DoesNotExist:
+        return Response({"error": "Producto no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+
+    productoSerializer = ProductoCreateSerializer(data=request.data, instance=producto)
+
+    if productoSerializer.is_valid():
+        try:
+            productoSerializer.save()
+            return Response("Producto EDITADO", status=status.HTTP_200_OK)
+
+        except serializers.ValidationError as error:
+            return Response(error.detail, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as error:
+            return Response(repr(error), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    else:
+        return Response(productoSerializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+#--------------------------------------Formularios PATCH-------------------------------------------------
+
+@api_view(['PATCH'])
+def actualizar_nombre_producto_api(request, producto_id):
+    # Permite actualizar solo el nombre de un producto.
+
+    try:
+        producto = Producto.objects.get(id=producto_id)
+    except Producto.DoesNotExist:
+        return Response({"error": "Producto no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+
+    serializer = ProductoActualizarNombreSerializer(data=request.data, instance=producto)
+
+    if serializer.is_valid():
+        try:
+            serializer.save()
+            return Response("Producto Actualizado", status=status.HTTP_200_OK)
+        except Exception as error:
+            print(repr(error))  # Se imprime en consola para depuración
+            return Response(repr(error), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    else:
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+#--------------------------------------Formularios DELETE-------------------------------------------------
+
+@api_view(['DELETE'])
+def eliminar_producto_api(request, producto_id):
+    # Elimina un producto existente.
+    
+    try:
+        producto = Producto.objects.get(id=producto_id)
+    except Producto.DoesNotExist:
+        return Response({"error": "Producto no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+
+    try:
+        producto.delete()
+        return Response("Producto ELIMINADO", status=status.HTTP_200_OK)
+    except Exception as error:
+        return Response(repr(error), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+

@@ -17,14 +17,26 @@ urlpatterns = [
     
     # POST
     path('productos/crear/', crear_producto_api, name='crear_producto_api'),
+    path('ordenes/crear/', crear_orden_api, name='crear_orden_api'),
+    path('proveedores/crear/', crear_proveedor_api, name='crear_proveedor_api'),
+    path('favoritos/agregar/', crear_favoritos_api, name='crear_favoritos_api'),
     
     # PUT
-    path('productos/<int:producto_id>/actualizar/', actualizar_producto_api, name='actualizar_producto_api'),
-    
+    path('productos/<int:producto_id>/editar/', editar_producto_api, name='editar_producto_api'),
+    path('ordenes/<int:orden_id>/editar/', editar_orden_api, name='editar_orden_api'),
+    path('proveedores/<int:proveedor_id>/editar/', editar_proovedor_api, name='editar_proovedor_api'),
+    path('favoritos/<int:favorito_id>/editar/', editar_favoritos_api, name='editar_favoritos_api'),
+
     # PATCH
     path('productos/<int:producto_id>/actualizar-nombre/', actualizar_nombre_producto_api, name='actualizar_nombre_producto_api'),
-    
+    path('ordenes/<int:orden_id>/actualizar-estado/', actualizar_estado_orden_api, name='actualizar_estado_orden_api'),
+    path('proveedores/<int:proveedor_id>/actualizar-contacto/', actualizar_contacto_proveedor_api, name='actualizar_contacto_proveedor_api'),
+    path('favoritos/<int:favorito_id>/actualizar-prioridad/', actualizar_prioridad_favoritos_api, name='actualizar_prioridad_favoritos_api'),
+
     # DELETE
     path('productos/<int:producto_id>/eliminar/', eliminar_producto_api, name='eliminar_producto_api'),
+    path('ordenes/<int:orden_id>/eliminar/', eliminar_orden_api, name='eliminar_orden_api'),
+    path('proveedores/<int:proveedor_id>/eliminar/', eliminar_proveedor_api, name='eliminar_proveedor_api'),
+    path('favoritos/<int:favorito_id>/eliminar/', eliminar_favoritos_api, name='eliminar_favoritos_api'),
 
 ]

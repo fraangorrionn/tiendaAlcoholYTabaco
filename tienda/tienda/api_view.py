@@ -176,16 +176,79 @@ def crear_producto_api(request):
         except serializers.ValidationError as error:
             return Response(error.detail, status=status.HTTP_400_BAD_REQUEST)
         except Exception as error:
-            print(repr(error))  # Se imprime en consola para depuración
+            print(repr(error))
             return Response(repr(error), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     else:
         print("❌ Errores de validación:", productoCreateSerializer.errors)
         return Response(productoCreateSerializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['POST'])
+def crear_orden_api(request): 
+    # Crea una nueva orden con validaciones personalizadas.
+
+    ordenCreateSerializer = OrdenSerializerCreate(data=request.data)
+
+    if ordenCreateSerializer.is_valid():
+        try:
+            ordenCreateSerializer.save()
+            return Response("Orden Creada", status=status.HTTP_201_CREATED)
+
+        except serializers.ValidationError as error:
+            return Response(error.detail, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as error:
+            print(repr(error))
+            return Response(repr(error), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    else:
+        print("❌ Errores de validación:", ordenCreateSerializer.errors)
+        return Response(ordenCreateSerializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+def crear_proveedor_api(request): 
+    # Crea un nuevo proveedor con validaciones personalizadas.
+    
+    proveedorCreateSerializer = ProveedorSerializerCreate(data=request.data)
+
+    if proveedorCreateSerializer.is_valid():
+        try:
+            proveedorCreateSerializer.save()
+            return Response("Proveedor Creado", status=status.HTTP_201_CREATED)
+
+        except serializers.ValidationError as error:
+            return Response(error.detail, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as error:
+            print(repr(error))
+            return Response(repr(error), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    else:
+        print("❌ Errores de validación:", proveedorCreateSerializer.errors)
+        return Response(proveedorCreateSerializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+def crear_favoritos_api(request): 
+    # Agrega un producto a los favoritos de un usuario.
+
+    favoritosCreateSerializer = FavoritosSerializerCreate(data=request.data)
+    print("📩 Datos recibidos en la petición:", request.data)
+
+    if favoritosCreateSerializer.is_valid():
+        try:
+            favoritosCreateSerializer.save()
+            return Response("Producto agregado a Favoritos", status=status.HTTP_201_CREATED)
+
+        except serializers.ValidationError as error:
+            print("❌ Error de validación en el guardado:", error.detail)
+            return Response(error.detail, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as error:
+            print("🔥 Error inesperado:", repr(error))
+            return Response(repr(error), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    else:
+        print("❌ Errores de validación:", favoritosCreateSerializer.errors)
+        return Response(favoritosCreateSerializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 #--------------------------------------Formularios PUT-------------------------------------------------
 @api_view(['PUT'])
-def actualizar_producto_api(request, producto_id):
-    # Actualiza completamente un producto existente.
+def editar_producto_api(request, producto_id):
+    # Edtia completamente un producto existente.
 
     try:
         producto = Producto.objects.get(id=producto_id)
@@ -205,6 +268,90 @@ def actualizar_producto_api(request, producto_id):
             return Response(repr(error), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     else:
         return Response(productoSerializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['PUT'])
+def editar_orden_api(request, orden_id):
+    # Edita completamente una orden existente.
+    
+    print(f"📌 Datos recibidos en la API (JSON): {request.data}") 
+
+    try:
+        orden = Orden.objects.get(id=orden_id)
+    except Orden.DoesNotExist:
+        return Response({"error": "Orden no encontrada"}, status=status.HTTP_404_NOT_FOUND)
+
+    ordenSerializer = OrdenSerializerCreate(data=request.data, instance=orden)
+
+    if ordenSerializer.is_valid():
+        try:
+            ordenSerializer.save()
+            return Response("Orden EDITADA", status=status.HTTP_200_OK)
+
+        except serializers.ValidationError as error:
+            return Response(error.detail, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as error:
+            return Response(repr(error), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    else:
+        return Response(ordenSerializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['PUT'])
+def editar_proovedor_api(request, proveedor_id):
+    # Actualiza completamente un proveedor existente.
+    
+    print(f"📌 Datos recibidos en la API (JSON): {request.data}") 
+
+    try:
+        proveedor = Proveedor.objects.get(id=proveedor_id)
+    except Proveedor.DoesNotExist:
+        return Response({"error": "Proveedor no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+
+    proveedorSerializer = ProveedorSerializerCreate(data=request.data, instance=proveedor)
+
+    if proveedorSerializer.is_valid():
+        try:
+            proveedorSerializer.save()
+            return Response("Proveedor EDITADO", status=status.HTTP_200_OK)
+
+        except serializers.ValidationError as error:
+            return Response(error.detail, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as error:
+            return Response(repr(error), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    else:
+        return Response(proveedorSerializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['PUT'])
+def editar_favoritos_api(request, favorito_id):
+    print(f"📌 Datos recibidos en la API (JSON): {request.data}") 
+
+    try:
+        favorito = Favoritos.objects.get(id=favorito_id)
+    except Favoritos.DoesNotExist:
+        print(f"❌ ERROR: Entrada en Favoritos con ID {favorito_id} no encontrada")
+        return Response({"error": "Favorito no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+
+    #Serializador con instancia existente (edición)
+    favoritosSerializer = FavoritosSerializerCreate(instance=favorito, data=request.data)
+
+    #Verificar si los datos pasan la validación
+    if favoritosSerializer.is_valid():
+        try:
+            print(f"✅ Datos validados antes de guardar: {favoritosSerializer.validated_data}")  # Ver qué datos se guardarán
+            favoritosSerializer.save()
+            print("✔️ Favorito editado exitosamente en la base de datos.")
+            return Response("Favorito EDITADO", status=status.HTTP_200_OK)
+
+        except serializers.ValidationError as error:
+            print(f"❌ ERROR en validación al guardar: {error.detail}")
+            return Response(error.detail, status=status.HTTP_400_BAD_REQUEST)
+
+        except Exception as error:
+            print(f"🔥 ERROR inesperado al guardar: {repr(error)}")
+            return Response({"error": repr(error)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    else:
+        print(f"❌ ERROR en validación: {favoritosSerializer.errors}")
+        return Response(favoritosSerializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     
 #--------------------------------------Formularios PATCH-------------------------------------------------
 
@@ -229,6 +376,72 @@ def actualizar_nombre_producto_api(request, producto_id):
     else:
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['PATCH'])    
+def actualizar_estado_orden_api(request, orden_id):
+    # Permite actualizar solo el estado de una orden.
+    
+    try:
+        orden = Orden.objects.get(id=orden_id)
+    except Orden.DoesNotExist:
+        return Response({"error": "Orden no encontrada"}, status=status.HTTP_404_NOT_FOUND)
+
+    serializer = OrdenActualizarEstadoSerializer(data=request.data, instance=orden)
+
+    if serializer.is_valid():
+        try:
+            serializer.save()
+            return Response("Orden Actualizada", status=status.HTTP_200_OK)
+        except Exception as error:
+            print(repr(error))
+            return Response(repr(error), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    else:
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['PATCH'])    
+def actualizar_contacto_proveedor_api(request, proveedor_id):
+    # Permite actualizar solo el contacto de un proveedor.
+    
+    try:
+        proveedor = Proveedor.objects.get(id=proveedor_id)
+    except Proveedor.DoesNotExist:
+        return Response({"error": "Proveedor no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+
+    serializer = ProveedorActualizarContactoSerializer(data=request.data, instance=proveedor)
+
+    if serializer.is_valid():
+        try:
+            serializer.save()
+            return Response("Proveedor Actualizado", status=status.HTTP_200_OK)
+        except Exception as error:
+            print(repr(error))
+            return Response(repr(error), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    else:
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['PATCH'])    
+def actualizar_prioridad_favoritos_api(request, favorito_id):
+    # Permite actualizar solo la prioridad o las notas de una entrada en Favoritos.
+    
+    try:
+        favorito = Favoritos.objects.get(id=favorito_id)
+    except Favoritos.DoesNotExist:
+        return Response({"error": "Favorito no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+
+    serializer = FavoritosSerializerActualizarPrioridad(data=request.data, instance=favorito)
+
+    if serializer.is_valid():
+        try:
+            serializer.save()
+            return Response("Favorito Actualizado", status=status.HTTP_200_OK)
+        except Exception as error:
+            print(repr(error))
+            return Response(repr(error), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    else:
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
 #--------------------------------------Formularios DELETE-------------------------------------------------
 
 @api_view(['DELETE'])
@@ -246,3 +459,43 @@ def eliminar_producto_api(request, producto_id):
     except Exception as error:
         return Response(repr(error), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+@api_view(['DELETE'])
+def eliminar_orden_api(request, orden_id):
+    # Elimina una orden existente.
+    
+    try:
+        orden = Orden.objects.get(id=orden_id)
+    except Orden.DoesNotExist:
+        return Response({"error": "Orden no encontrada"}, status=status.HTTP_404_NOT_FOUND)
+
+    try:
+        orden.delete()
+        return Response("Orden ELIMINADA", status=status.HTTP_200_OK)
+    except Exception as error:
+        return Response(repr(error), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+@api_view(['DELETE'])
+def eliminar_proveedor_api(request, proveedor_id):
+    try:
+        proveedor = Proveedor.objects.get(id=proveedor_id)
+    except Proveedor.DoesNotExist:
+        return Response({"error": "Proveedor no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+
+    try:
+        proveedor.delete()
+        return Response("Proveedor ELIMINADO", status=status.HTTP_200_OK)
+    except Exception as error:
+        return Response(repr(error), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['DELETE'])
+def eliminar_favoritos_api(request, favorito_id):
+    try:
+        favorito = Favoritos.objects.get(id=favorito_id)
+    except Favoritos.DoesNotExist:
+        return Response({"error": "Favorito no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+
+    try:
+        favorito.delete()
+        return Response("Favorito ELIMINADO", status=status.HTTP_200_OK)
+    except Exception as error:
+        return Response(repr(error), status=status.HTTP_500_INTERNAL_SERVER_ERROR)

@@ -1,6 +1,9 @@
-from django.urls import path
+from django.urls import path, include
 from tienda.api_view import *
+from rest_framework.routers import DefaultRouter
 
+router = DefaultRouter()
+router.register(r'productos', ProductoViewSet, basename='productos')
 
 urlpatterns = [
     path('productos/', lista_productos_api, name='lista_productos_api'),
@@ -8,6 +11,8 @@ urlpatterns = [
     path('ordenes/', lista_ordenes_api, name='lista_ordenes_api'),
     path('proveedores/', lista_proveedores_api, name='lista_proveedores_api'),
     path('reclamos/', reclamo_list_view, name='reclamo-list'),
+    path('usuarios/', lista_usuarios_api, name='lista_usuarios_api'),
+    
     
     #----------------------------------------------Formularios---------------------------------------------------------------
     path('productos/busqueda/', busqueda_simple_producto, name='busqueda_simple_producto'),
@@ -19,7 +24,9 @@ urlpatterns = [
     path('productos/crear/', crear_producto_api, name='crear_producto_api'),
     path('ordenes/crear/', crear_orden_api, name='crear_orden_api'),
     path('proveedores/crear/', crear_proveedor_api, name='crear_proveedor_api'),
-    path('favoritos/agregar/', crear_favoritos_api, name='crear_favoritos_api'),
+    path('favoritos/crear/', crear_favoritos_api, name='crear_favoritos_api'),
+    path('usuarios/crear/', crear_usuario_api, name='crear_usuario_api'),
+
     
     # PUT
     path('productos/<int:producto_id>/editar/', editar_producto_api, name='editar_producto_api'),
@@ -38,5 +45,9 @@ urlpatterns = [
     path('ordenes/<int:orden_id>/eliminar/', eliminar_orden_api, name='eliminar_orden_api'),
     path('proveedores/<int:proveedor_id>/eliminar/', eliminar_proveedor_api, name='eliminar_proveedor_api'),
     path('favoritos/<int:favorito_id>/eliminar/', eliminar_favoritos_api, name='eliminar_favoritos_api'),
+    
+    # ViewSets
+    
+    path('', include(router.urls)),
 
 ]

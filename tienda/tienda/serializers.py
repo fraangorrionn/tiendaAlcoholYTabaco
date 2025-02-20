@@ -32,10 +32,11 @@ class DetalleOrdenSerializer(serializers.ModelSerializer):
 class OrdenSerializer(serializers.ModelSerializer):
     usuario = serializers.CharField(source='usuario.username')
     productos = DetalleOrdenSerializer(source='detalleorden_set', many=True)
+    archivo_adjunto = serializers.FileField(required=False, allow_null=True)  # Nuevo campo
 
     class Meta:
         model = Orden
-        fields = ['id', 'fecha_orden', 'total', 'estado', 'usuario', 'productos']
+        fields = ['id', 'fecha_orden', 'total', 'estado', 'usuario', 'productos', 'archivo_adjunto']
 
 # Serializador para los proveedores con sus productos
 class ProveedorSerializer(serializers.ModelSerializer):
@@ -66,7 +67,18 @@ class BusquedaProductoSerializer(serializers.Serializer):
                 raise serializers.ValidationError("El precio mínimo no puede ser mayor que el máximo.")
         return data
 
+class FavoritoSerializer(serializers.ModelSerializer):
+    usuario_nombre = serializers.CharField(source='usuario.username', read_only=True)
+    producto_nombre = serializers.CharField(source='producto.nombre', read_only=True)
 
+    class Meta:
+        model = Favoritos
+        fields = ['id', 'usuario', 'usuario_nombre', 'producto', 'producto_nombre', 'fecha_agregado']
+
+class UsuarioSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Usuario
+        fields = ['id', 'username', 'email']  # Incluye los campos que necesites
 #---------------------------------------------------------POST-------------------------------------------------------
 
 class ProductoCreateSerializer(serializers.ModelSerializer):
@@ -118,6 +130,7 @@ class OrdenSerializerCreate(serializers.ModelSerializer):
     
     ESTADO_OPCIONES = [("", "Ninguno")] + Orden.ESTADO_ORDEN
     estado = serializers.ChoiceField(choices=ESTADO_OPCIONES)
+    archivo_adjunto = serializers.FileField(required=False, allow_null=True)  # Nuevo campo
 
     class Meta:
         model = Orden
@@ -125,24 +138,22 @@ class OrdenSerializerCreate(serializers.ModelSerializer):
 
     def validate_total(self, total):
         # Validar que el total de la orden sea mayor que 0.
-        
         if total <= 0:
             raise serializers.ValidationError("El total debe ser mayor que 0.")
         return total
 
     def validate_usuario(self, usuario):
         # Validar que el usuario sea válido.
-        
         if not Usuario.objects.filter(id=usuario.id).exists():
             raise serializers.ValidationError("El usuario seleccionado no existe.")
         return usuario
 
     def validate_estado(self, estado):
         # Validar que se seleccione un estado válido.
-        
         if estado == "":
             raise serializers.ValidationError("Debe seleccionar un estado válido para la orden.")
         return estado
+
 
 class ProveedorSerializerCreate(serializers.ModelSerializer):
     
@@ -210,7 +221,46 @@ class FavoritosSerializerCreate(serializers.ModelSerializer):
         
         return Favoritos.objects.create(**validated_data)
 
+class UsuarioCreateSerializer(serializers.ModelSerializer):
 
+    class Meta:
+        model = Usuario
+        fields = ['username', 'email', 'password', 'rol', 'direccion', 'telefono']
+
+    def validate_username(self, username):
+        """
+        Validar que el nombre de usuario no esté vacío y no se repita.
+        """
+        if not username.strip():
+            raise serializers.ValidationError("El nombre de usuario no puede estar vacío.")
+
+        if Usuario.objects.filter(username=username).exists():
+            raise serializers.ValidationError("Este nombre de usuario ya está en uso.")
+        
+        return username
+
+    def validate_email(self, email):
+        """
+        Validar que el email sea único y tenga un formato válido.
+        """
+        if Usuario.objects.filter(email=email).exists():
+            raise serializers.ValidationError("Este email ya está registrado.")
+        
+        return email
+
+    def create(self, validated_data):
+        """
+        Crear un usuario y encriptar su contraseña antes de guardarlo.
+        """
+        usuario = Usuario.objects.create_user(
+            username=validated_data['username'],
+            email=validated_data['email'],
+            password=validated_data['password'],  # Se encripta automáticamente con create_user
+            rol=validated_data.get('rol', Usuario.CLIENTE),  # Por defecto CLIENTE
+            direccion=validated_data.get('direccion', 'Sin dirección'),
+            telefono=validated_data.get('telefono', '')
+        )
+        return usuario
 #---------------------------------------------------------PATCH-------------------------------------------------------
 
 class ProductoActualizarNombreSerializer(serializers.ModelSerializer):
@@ -228,14 +278,14 @@ class ProductoActualizarNombreSerializer(serializers.ModelSerializer):
         return nombre
 
 class OrdenActualizarEstadoSerializer(serializers.ModelSerializer):
- 
+    archivo_adjunto = serializers.FileField(required=False, allow_null=True)
+
     class Meta:
         model = Orden
-        fields = ['estado']
-    
+        fields = ['estado', 'archivo_adjunto']  # Se agrega archivo_adjunto para que pueda actualizarse
+
     def validate_estado(self, estado):
         # Validar que el estado sea uno de los permitidos.
-    
         if estado not in dict(Orden.ESTADO_ORDEN):
             raise serializers.ValidationError('Estado no válido.')
         return estado
@@ -262,3 +312,10 @@ class FavoritosSerializerActualizarPrioridad(serializers.ModelSerializer):
         if prioridad < 1 or prioridad > 5:
             raise serializers.ValidationError("La prioridad debe estar entre 1 y 5.")
         return prioridad
+
+#---------------------------------------------------------ViewSets-------------------------------------------------------
+
+class ProductoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Producto
+        fields = '__all__'

@@ -3,8 +3,10 @@ from rest_framework.response import Response
 from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 from django.db.models import Prefetch, Q
-from .models import Producto, ProductoCategoria, Inventario, Orden, Proveedor, Inventario, Reclamo
+from .models import *
 from .serializers import *
+from rest_framework import viewsets
+
 
 @api_view(['GET'])
 def lista_productos_api(request):
@@ -45,6 +47,15 @@ def lista_ordenes_api(request):
 
     serializer = OrdenSerializer(ordenes, many=True)
     return Response(serializer.data)
+
+@api_view(['GET'])
+def lista_usuarios_api(request):
+    """
+    Devuelve la lista de todos los usuarios registrados.
+    """
+    usuarios = Usuario.objects.all()
+    serializer = UsuarioSerializer(usuarios, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
 def lista_proveedores_api(request):
@@ -186,7 +197,14 @@ def crear_producto_api(request):
 def crear_orden_api(request): 
     # Crea una nueva orden con validaciones personalizadas.
 
-    ordenCreateSerializer = OrdenSerializerCreate(data=request.data)
+    datos = request.data.copy()  # Copia de datos del request
+    archivo = request.FILES.get('archivo_adjunto', None)  # Obtener archivo si existe
+
+    # Agregar archivo a los datos si está presente
+    if archivo:
+        datos['archivo_adjunto'] = archivo
+
+    ordenCreateSerializer = OrdenSerializerCreate(data=datos)
 
     if ordenCreateSerializer.is_valid():
         try:
@@ -198,9 +216,11 @@ def crear_orden_api(request):
         except Exception as error:
             print(repr(error))
             return Response(repr(error), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
     else:
         print("❌ Errores de validación:", ordenCreateSerializer.errors)
         return Response(ordenCreateSerializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 @api_view(['POST'])
 def crear_proveedor_api(request): 
@@ -243,6 +263,27 @@ def crear_favoritos_api(request):
     else:
         print("❌ Errores de validación:", favoritosCreateSerializer.errors)
         return Response(favoritosCreateSerializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['POST'])
+def crear_usuario_api(request):
+    """
+    Tengo que crear un usuario por la relacion con favoritos
+    """
+    usuarioSerializer = UsuarioCreateSerializer(data=request.data)
+
+    if usuarioSerializer.is_valid():
+        try:
+            usuarioSerializer.save()
+            return Response("Usuario Creado", status=status.HTTP_201_CREATED)
+
+        except serializers.ValidationError as error:
+            return Response(error.detail, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as error:
+            print(repr(error))
+            return Response(repr(error), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    print("❌ Errores de validación:", usuarioSerializer.errors)
+    return Response(usuarioSerializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 #--------------------------------------Formularios PUT-------------------------------------------------
@@ -271,7 +312,7 @@ def editar_producto_api(request, producto_id):
     
 @api_view(['PUT'])
 def editar_orden_api(request, orden_id):
-    # Edita completamente una orden existente.
+    # Edita completamente una orden existente, incluyendo el archivo adjunto.
     
     print(f"📌 Datos recibidos en la API (JSON): {request.data}") 
 
@@ -280,7 +321,14 @@ def editar_orden_api(request, orden_id):
     except Orden.DoesNotExist:
         return Response({"error": "Orden no encontrada"}, status=status.HTTP_404_NOT_FOUND)
 
-    ordenSerializer = OrdenSerializerCreate(data=request.data, instance=orden)
+    datos = request.data.copy()  # Copia los datos del request
+    archivo = request.FILES.get('archivo_adjunto', None)  # Obtener archivo si se envía uno
+
+    # Agregar archivo a los datos si está presente
+    if archivo:
+        datos['archivo_adjunto'] = archivo
+
+    ordenSerializer = OrdenSerializerCreate(data=datos, instance=orden, partial=True)  # `partial=True` permite actualizar campos opcionales
 
     if ordenSerializer.is_valid():
         try:
@@ -291,8 +339,10 @@ def editar_orden_api(request, orden_id):
             return Response(error.detail, status=status.HTTP_400_BAD_REQUEST)
         except Exception as error:
             return Response(repr(error), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
     else:
         return Response(ordenSerializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     
 @api_view(['PUT'])
 def editar_proovedor_api(request, proveedor_id):
@@ -378,24 +428,28 @@ def actualizar_nombre_producto_api(request, producto_id):
 
 @api_view(['PATCH'])    
 def actualizar_estado_orden_api(request, orden_id):
-    # Permite actualizar solo el estado de una orden.
+    # Permite actualizar solo el estado de una orden sin afectar el archivo adjunto.
     
     try:
         orden = Orden.objects.get(id=orden_id)
     except Orden.DoesNotExist:
         return Response({"error": "Orden no encontrada"}, status=status.HTTP_404_NOT_FOUND)
 
-    serializer = OrdenActualizarEstadoSerializer(data=request.data, instance=orden)
+    datos = request.data.copy()  # Copia los datos del request
+
+    serializer = OrdenActualizarEstadoSerializer(instance=orden, data=datos, partial=True)  # `partial=True` permite actualizar solo los campos enviados
 
     if serializer.is_valid():
         try:
             serializer.save()
             return Response("Orden Actualizada", status=status.HTTP_200_OK)
         except Exception as error:
-            print(repr(error))
+            print(f"❌ Error inesperado: {repr(error)}")
             return Response(repr(error), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     else:
+        print(f"⚠️ Errores en validación: {serializer.errors}")
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     
 @api_view(['PATCH'])    
 def actualizar_contacto_proveedor_api(request, proveedor_id):
@@ -459,9 +513,12 @@ def eliminar_producto_api(request, producto_id):
     except Exception as error:
         return Response(repr(error), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+import os
+from django.conf import settings
+
 @api_view(['DELETE'])
 def eliminar_orden_api(request, orden_id):
-    # Elimina una orden existente.
+    # Elimina una orden y su archivo adjunto si existe.
     
     try:
         orden = Orden.objects.get(id=orden_id)
@@ -469,10 +526,20 @@ def eliminar_orden_api(request, orden_id):
         return Response({"error": "Orden no encontrada"}, status=status.HTTP_404_NOT_FOUND)
 
     try:
-        orden.delete()
-        return Response("Orden ELIMINADA", status=status.HTTP_200_OK)
+        # 📌 Verificar si la orden tiene un archivo adjunto y eliminarlo
+        if orden.archivo_adjunto:
+            archivo_path = os.path.join(settings.MEDIA_ROOT, str(orden.archivo_adjunto))
+            if os.path.exists(archivo_path):
+                os.remove(archivo_path)  # Eliminar archivo físicamente
+        
+        orden.delete()  # Eliminar la orden de la base de datos
+
+        return Response("Orden y archivo adjunto eliminados correctamente.", status=status.HTTP_200_OK)
+    
     except Exception as error:
-        return Response(repr(error), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        print(f"❌ Error inesperado: {repr(error)}")
+        return Response({"error": repr(error)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
     
 @api_view(['DELETE'])
 def eliminar_proveedor_api(request, proveedor_id):
@@ -499,3 +566,39 @@ def eliminar_favoritos_api(request, favorito_id):
         return Response("Favorito ELIMINADO", status=status.HTTP_200_OK)
     except Exception as error:
         return Response(repr(error), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+# ViewSets
+class ProductoViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet para manejar todas las operaciones CRUD de Producto.
+    """
+    queryset = Producto.objects.all()
+    serializer_class = ProductoSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = ProductoCreateSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": "Producto Creado"}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def update(self, request, *args, **kwargs):
+        producto = self.get_object()
+        serializer = ProductoCreateSerializer(instance=producto, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": "Producto Editado"}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def partial_update(self, request, *args, **kwargs):
+        producto = self.get_object()
+        serializer = ProductoActualizarNombreSerializer(instance=producto, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": "Producto Actualizado"}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def destroy(self, request, *args, **kwargs):
+        producto = self.get_object()
+        producto.delete()
+        return Response({"message": "Producto Eliminado"}, status=status.HTTP_200_OK)

@@ -319,3 +319,30 @@ class ProductoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Producto
         fields = '__all__'
+        
+        
+#---------------------------------------------------------Usuario--------------------------------------------------------
+
+class UsuarioSerializerRegistro(serializers.Serializer):
+ 
+    username = serializers.CharField()
+    password1 = serializers.CharField()
+    password2 = serializers.CharField()
+    email = serializers.EmailField()
+    rol = serializers.IntegerField()
+    
+    def validate_username(self,username):
+        usuario = Usuario.objects.filter(username=username).first()
+        if(not usuario is None):
+            raise serializers.ValidationError('Ya existe un usuario con ese nombre')
+        return username
+    
+    def validate_password1(self, password1):
+        password2 = self.initial_data.get("password2")
+
+        if password2 is None:
+                raise serializers.ValidationError("Debe proporcionar el campo password2.")
+
+        if password1 != password2:
+            raise serializers.ValidationError("Las contraseñas no coinciden.")
+        return password1

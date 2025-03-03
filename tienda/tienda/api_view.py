@@ -6,7 +6,7 @@ from django.db.models import Prefetch, Q
 from .models import *
 from .serializers import *
 from rest_framework import viewsets
-
+from django.contrib.auth.models import Group
 
 @api_view(['GET'])
 def lista_productos_api(request):
@@ -602,3 +602,57 @@ class ProductoViewSet(viewsets.ModelViewSet):
         producto = self.get_object()
         producto.delete()
         return Response({"message": "Producto Eliminado"}, status=status.HTTP_200_OK)
+    
+    
+from rest_framework import generics
+from rest_framework.permissions import AllowAny
+
+@api_view(['GET'])
+def obtener_ordenes_usuario(request, usuario_id):
+    ordenes = Orden.objects.select_related('usuario').filter(usuario_id=usuario_id).prefetch_related(
+        Prefetch('detalleorden_set')  # Relación ManyToOne con DetalleOrden
+    )
+
+    if not ordenes.exists():
+        return Response({'error': 'No se encontraron órdenes para este usuario'}, status=404)
+
+    serializer = OrdenSerializer(ordenes, many=True)
+    return Response(serializer.data)
+
+class registrar_usuario(generics.CreateAPIView):
+    serializer_class = UsuarioSerializerRegistro
+    
+    def create(self, request, *args, **kwargs):
+        serializers = UsuarioSerializerRegistro(data=request.data)
+        if serializers.is_valid():
+            try:
+                rol = request.data.get('rol')
+                user = Usuario.objects.create_user(
+                    username=serializers.validated_data["username"], 
+                    email=serializers.validated_data["email"], 
+                    password=serializers.validated_data["password1"],
+                    rol=rol,
+                )
+
+                if rol == Usuario.CLIENTE:
+                    grupo = Group.objects.get(name='Clientes')
+                    grupo.user_set.add(user)
+                elif rol == Usuario.GERENTE:
+                    grupo = Group.objects.get(name='Gerentes')
+                    grupo.user_set.add(user)
+
+                usuario_serializado = UsuarioSerializer(user)
+                return Response(usuario_serializado.data, status=status.HTTP_201_CREATED)
+            except Exception as error:
+                return Response({'error': str(error)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        else:
+            return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+from oauth2_provider.models import AccessToken     
+@api_view(['GET'])
+def obtener_usuario_token(request,token):
+    ModeloToken = AccessToken.objects.get(token=token)
+    usuario = Usuario.objects.get(id=ModeloToken.user_id)
+    serializer = UsuarioSerializer(usuario)
+    return Response(serializer.data)
+    

@@ -49,5 +49,11 @@ urlpatterns = [
     # ViewSets
     
     path('', include(router.urls)),
+    
+    
+    #usuario
+    path('ordenes/<int:usuario_id>/', obtener_ordenes_usuario, name='obtener_ordenes_usuario'),
+    path('registrar/', registrar_usuario.as_view(), name='registrar_usuario'),
+    path('usuario/token/<str:token>/', obtener_usuario_token, name='obtener_usuario_token'),
 
 ]

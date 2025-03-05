@@ -7,6 +7,12 @@ from .models import *
 from .serializers import *
 from rest_framework import viewsets
 from django.contrib.auth.models import Group
+from .forms import *
+from rest_framework.authentication import SessionAuthentication
+from rest_framework.permissions import AllowAny
+from oauth2_provider.models import AccessToken 
+from oauth2_provider.contrib.rest_framework import OAuth2Authentication
+from rest_framework import status
 
 @api_view(['GET'])
 def lista_productos_api(request):
@@ -603,51 +609,54 @@ class ProductoViewSet(viewsets.ModelViewSet):
         producto.delete()
         return Response({"message": "Producto Eliminado"}, status=status.HTTP_200_OK)
     
-    
+#--------------------------------------REGISTRO USUARIO-------------------------------------------------
+# views.py
 from rest_framework import generics
 from rest_framework.permissions import AllowAny
-
-@api_view(['GET'])
-def obtener_ordenes_usuario(request, usuario_id):
-    ordenes = Orden.objects.select_related('usuario').filter(usuario_id=usuario_id).prefetch_related(
-        Prefetch('detalleorden_set')  # Relación ManyToOne con DetalleOrden
-    )
-
-    if not ordenes.exists():
-        return Response({'error': 'No se encontraron órdenes para este usuario'}, status=404)
-
-    serializer = OrdenSerializer(ordenes, many=True)
-    return Response(serializer.data)
-
+    
 class registrar_usuario(generics.CreateAPIView):
     serializer_class = UsuarioSerializerRegistro
+    permission_classes = [AllowAny]
     
     def create(self, request, *args, **kwargs):
         serializers = UsuarioSerializerRegistro(data=request.data)
+
         if serializers.is_valid():
             try:
                 rol = request.data.get('rol')
-                user = Usuario.objects.create_user(
-                    username=serializers.validated_data["username"], 
-                    email=serializers.validated_data["email"], 
-                    password=serializers.validated_data["password1"],
-                    rol=rol,
-                )
 
-                if rol == Usuario.CLIENTE:
+                user = Usuario.objects.create(
+                    username = serializers.validated_data["username"], 
+                    email=serializers.validated_data["email"], 
+                    password = serializers.data.get("password1"),
+                    rol= rol,
+                    direccion=serializers.validated_data.get("direccion", "sin_direccion"),
+                    telefono=serializers.validated_data.get("telefono", ""),
+                )
+                
+                if(int(rol) == Usuario.CLIENTE):
                     grupo = Group.objects.get(name='Clientes')
                     grupo.user_set.add(user)
-                elif rol == Usuario.GERENTE:
-                    grupo = Group.objects.get(name='Gerentes')
-                    grupo.user_set.add(user)
+                    cliente = Cliente.objects.create( usuario = user)
+                    cliente.save()
 
-                usuario_serializado = UsuarioSerializer(user)
-                return Response(usuario_serializado.data, status=status.HTTP_201_CREATED)
+                elif(int(rol) == Usuario.GERENTE):
+                    grupo = Group.objects.get(name='Gerentes') 
+                    grupo.user_set.add(user)
+                    gerente = Gerente.objects.create(usuario = user)
+                    gerente.save()
+
+                usuarioSerializado = UsuarioSerializer(user)
+                
+                return Response(usuarioSerializado.data)
             except Exception as error:
-                return Response({'error': str(error)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                print(repr(error))
+                return Response(repr(error), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         else:
             return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
         
+
+
 from oauth2_provider.models import AccessToken     
 @api_view(['GET'])
 def obtener_usuario_token(request,token):
@@ -655,4 +664,87 @@ def obtener_usuario_token(request,token):
     usuario = Usuario.objects.get(id=ModeloToken.user_id)
     serializer = UsuarioSerializer(usuario)
     return Response(serializer.data)
+
+#--------------------------------------GET USUARIOS-------------------------------------------------
+
+@api_view(['GET'])
+def listar_ordenes_usuario(request):
+    if not request.user.is_authenticated:
+        return Response({"error": "No estás autenticado."}, status=status.HTTP_401_UNAUTHORIZED)
+
+    print(f"Usuario autenticado: {request.user.username}")
+
+    # Filtrar órdenes del usuario autenticado
+    ordenes = Orden.objects.filter(usuario=request.user)
+    print(f"Órdenes encontradas: {ordenes}")
+
+    # Serializar los resultados
+    pedido_serializer = OrdenSerializer(ordenes, many=True)
+
+    return Response(pedido_serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def listar_favoritos_usuario(request):
+    if not request.user.is_authenticated:
+        return Response({"error": "No estás autenticado."}, status=status.HTTP_401_UNAUTHORIZED)
+
+    print(f"Usuario autenticado: {request.user.username}")
+
+    # Filtrar productos favoritos del usuario autenticado
+    favoritos = Favoritos.objects.filter(usuario=request.user)
+    print(f"Favoritos encontrados: {favoritos}")
+
+    # Serializar los resultados
+    favorito_serializer = FavoritoSerializer(favoritos, many=True)
+
+    return Response(favorito_serializer.data, status=status.HTTP_200_OK)
+
+
+
+#--------------------------------------POST USUARIOS-------------------------------------------------
+
+@api_view(['POST'])
+def crear_orden_usuario(request):
     
+    if not request.user.is_authenticated:
+        return Response({"error": "No estás autenticado."}, status=status.HTTP_401_UNAUTHORIZED)
+
+    data = request.data.copy()
+    data['usuario'] = request.user.id  # Asociamos la orden al usuario autenticado
+
+    orden_serializer = OrdenSerializerCreate(data=data)
+
+    if orden_serializer.is_valid():
+        try:
+            orden_serializer.save()
+            return Response({"mensaje": "Orden creada con éxito"}, status=status.HTTP_201_CREATED)
+        except serializers.ValidationError as error:
+            return Response(error.detail, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as error:
+            return Response({"error": repr(error)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    else:
+        return Response(orden_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+def crear_favorito_usuario(request):
+    
+    if not request.user.is_authenticated:
+        return Response({"error": "No estás autenticado."}, status=status.HTTP_401_UNAUTHORIZED)
+
+    data = request.data.copy()
+    data['usuario'] = request.user.id  # Asociamos el favorito al usuario autenticado
+
+    favorito_serializer = FavoritosSerializerCreate(data=data)
+
+    if favorito_serializer.is_valid():
+        try:
+            favorito_serializer.save()
+            return Response({"mensaje": "Producto agregado a favoritos"}, status=status.HTTP_201_CREATED)
+        except serializers.ValidationError as error:
+            return Response(error.detail, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as error:
+            return Response({"error": repr(error)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    else:
+        return Response(favorito_serializer.errors, status=status.HTTP_400_BAD_REQUEST)

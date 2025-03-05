@@ -52,8 +52,15 @@ urlpatterns = [
     
     
     #usuario
-    path('ordenes/<int:usuario_id>/', obtener_ordenes_usuario, name='obtener_ordenes_usuario'),
-    path('registrar/', registrar_usuario.as_view(), name='registrar_usuario'),
+    path('registrar/usuario', registrar_usuario.as_view(), name='registrar_usuario'),
     path('usuario/token/<str:token>/', obtener_usuario_token, name='obtener_usuario_token'),
+    
+    # get autentificacion
+    path('mis-ordenes/', listar_ordenes_usuario, name='listar_ordenes_usuario'),
+    path('mis-favoritos/', listar_favoritos_usuario, name='listar_favoritos_usuario'),
+    
+    # post autentificacion
+    path('crear-orden/', crear_orden_usuario, name='crear_orden_usuario'),
+    path('crear-favorito/', crear_favorito_usuario, name='crear_favorito_usuario'),
 
 ]

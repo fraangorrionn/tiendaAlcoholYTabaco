@@ -23,6 +23,19 @@ class Usuario(AbstractUser):
 
     def __str__(self):
         return self.username
+    
+class Cliente(models.Model):
+    usuario = models.OneToOneField(Usuario, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"Cliente: {self.usuario.username}"
+
+
+class Gerente(models.Model):
+    usuario = models.OneToOneField(Usuario, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"Gerente: {self.usuario.username}"
 
 
 class Producto(models.Model):

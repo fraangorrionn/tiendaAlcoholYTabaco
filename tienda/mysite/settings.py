@@ -60,6 +60,8 @@ INSTALLED_APPS = [
     'crispy_bootstrap5',
     'rest_framework',
     'oauth2_provider',
+    'corsheaders',
+    'rest_framework_simplejwt',
     
 
 ]
@@ -72,7 +74,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    "debug_toolbar.middleware.DebugToolbarMiddleware",
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'corsheaders.middleware.CorsMiddleware', 
 
 ]
 
@@ -168,13 +171,18 @@ OAUTH2_PROVIDER = {
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+#        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
 
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
     ),
+    
+#    'DEFAULT_RENDERER_CLASSES': (  # Asegura que devuelve JSON
+#        'rest_framework.renderers.JSONRenderer',
+#    ),
 }
+
 LOGIN_URL = '/login/'
 
 from datetime import timedelta

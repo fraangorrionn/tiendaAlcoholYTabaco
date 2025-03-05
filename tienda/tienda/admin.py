@@ -10,7 +10,9 @@ from .models import (
     Favoritos, 
     Reclamo, 
     Categoria, 
-    ProductoCategoria
+    ProductoCategoria,
+    Gerente,
+    Cliente
 )
 
 # Registro de modelos en el panel de administración
@@ -25,3 +27,5 @@ admin.site.register(Favoritos)
 admin.site.register(Reclamo)
 admin.site.register(Categoria)
 admin.site.register(ProductoCategoria)
+admin.site.register(Gerente)
+admin.site.register(Cliente)

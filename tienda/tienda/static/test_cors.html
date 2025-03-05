@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Test CORS</title>
+</head>
+<body>
+  <h1>Test CORS</h1>
+  <button id="cargarBtn">Cargar Datos</button>
+
+  <script>
+    const boton = document.getElementById('cargarBtn');
+    boton.addEventListener('click', () => {
+      fetch('https://fraangorrionn.pythonanywhere.com/api/v1/productos/')
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Error en la respuesta: ' + response.status);
+          }
+          return response.json();
+        })
+        .then(data => {
+          console.log('Datos recibidos:', data);
+          alert('Datos cargados correctamente. Revisa la consola (F12 > Console).');
+        })
+        .catch(error => {
+          console.error('Error en fetch:', error);
+        });
+    });
+  </script>
+</body>
+</html>

@@ -32,19 +32,16 @@ def index(request):
 
 
 # LISTA DE USUARIOS
-@permission_required('tienda.view_usuario')
 def lista_usuarios(request):
     usuarios = Usuario.objects.all()
     return render(request, 'Paginas/usuarios_list.html', {'usuarios': usuarios})
 
 # LISTA DE PRODUCTOS
-@permission_required('tienda.view_producto')
 def lista_productos(request):
     productos = Producto.objects.prefetch_related('categorias').order_by('-precio')
     return render(request, 'Paginas/productos_list.html', {'productos': productos})
 
 # LISTA DE ÓRDENES
-@permission_required('tienda.view_orden')
 def lista_ordenes(request):
     if request.user.rol == Usuario.CLIENTE:
         ordenes = Orden.objects.filter(usuario=request.user).select_related('usuario').order_by('-fecha_orden')[:10]
@@ -54,7 +51,6 @@ def lista_ordenes(request):
     return render(request, 'Paginas/ordenes_list.html', {'ordenes': ordenes})
 
 # LISTA DE DETALLES DE ÓRDENES
-@permission_required('tienda.view_detalleorden')
 def lista_detalles_orden(request):
     detalles = DetalleOrden.objects.select_related('producto', 'orden').all()
     for detalle in detalles:
@@ -63,19 +59,16 @@ def lista_detalles_orden(request):
     return render(request, 'Paginas/detalles_orden_list.html', {'detalles': detalles})
 
 # LISTA DE PROVEEDORES
-@permission_required('tienda.view_proveedor')
 def lista_proveedores(request):
     proveedores = Proveedor.objects.prefetch_related('productos')
     return render(request, 'Paginas/proveedor_list.html', {'proveedores': proveedores})
 
 # LISTA DE INVENTARIOS
-@permission_required('tienda.view_inventario')
 def lista_inventarios(request):
     inventarios = Inventario.objects.select_related('producto').filter(cantidad_disponible__lt=F('minimo_requerido')).order_by('cantidad_disponible')
     return render(request, 'Paginas/inventarios_list.html', {'inventarios': inventarios})
 
 # LISTA DE TARJETAS
-@permission_required('tienda.view_tarjeta')
 def lista_tarjetas(request):
     tarjetas = Tarjeta.objects.select_related('usuario').all()
     context = {
@@ -85,13 +78,11 @@ def lista_tarjetas(request):
     return render(request, 'Paginas/tarjetas_list.html', context)
 
 # LISTA DE FAVORITOS
-@permission_required('tienda.view_favoritos')
 def lista_favoritos(request):
     favoritos = Favoritos.objects.select_related('usuario', 'producto').filter(prioridad__gte=2)
     return render(request, 'Paginas/favoritos_list.html', {'favoritos': favoritos})
 
 # LISTA DE RECLAMOS
-@permission_required('tienda.view_reclamo')
 def lista_reclamos(request):
     mostrar_pendientes = request.GET.get('pendientes', 'false') == 'true'
 
@@ -103,13 +94,11 @@ def lista_reclamos(request):
     return render(request, 'Paginas/reclamos_list.html', {'reclamos': reclamos, 'mostrar_pendientes': mostrar_pendientes})
 
 # LISTA DE CATEGORÍAS
-@permission_required('tienda.view_categoria')
 def lista_categorias(request):
     categorias = Categoria.objects.filter(estado='activo').order_by('-prioridad')
     return render(request, 'Paginas/categorias_list.html', {'categorias': categorias})
 
 # LISTA DE PRODUCTOS POR CATEGORÍA
-@permission_required('tienda.view_productocategoria')
 def lista_producto_categoria(request):
     productos_categoria = ProductoCategoria.objects.select_related('producto', 'categoria').filter(
         Q(nota_adicional__isnull=True) | Q(nota_adicional=""),

@@ -79,6 +79,16 @@ MIDDLEWARE = [
 
 ]
 
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "http://localhost:4200",
+    "http://localhost:8000", 
+    "http://0.0.0.0:8081",
+    "http://0.0.0.0:8000",
+    "http://fraangorrionn.pythonanywhere.com",
+]
+
+
 ROOT_URLCONF = 'mysite.urls'
 
 TEMPLATES = [
@@ -169,18 +179,13 @@ OAUTH2_PROVIDER = {
 }
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
+    'DEFAULT_AUTHENTICATION_CLASSES': [
         'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
-#        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ),
-
-    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication', 
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
-    ),
-    
-#    'DEFAULT_RENDERER_CLASSES': (  # Asegura que devuelve JSON
-#        'rest_framework.renderers.JSONRenderer',
-#    ),
+    ],
 }
 
 LOGIN_URL = '/login/'

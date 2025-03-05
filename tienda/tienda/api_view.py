@@ -46,9 +46,9 @@ def lista_ordenes_api(request):
     search = request.GET.get('search', '')
     ordering = request.GET.get('ordering', '-fecha_orden')  # Ordena por fecha descendente
 
-    ordenes = Orden.objects.filter(usuario__username__icontains=search).prefetch_related(
-        'usuario',  # Relación con el usuario
-        'detalleorden_set__producto'  # Relación con productos en la orden
+    ordenes = Orden.objects.prefetch_related(
+        'usuario',
+        'detalleorden_set__producto'
     ).order_by(ordering)
 
     serializer = OrdenSerializer(ordenes, many=True)
@@ -201,12 +201,11 @@ def crear_producto_api(request):
     
 @api_view(['POST'])
 def crear_orden_api(request): 
-    # Crea una nueva orden con validaciones personalizadas.
+    print(f"🔍 Datos recibidos en API-REST: {request.data}")  # 🔹 Agregar debug para ver qué datos llegan
 
-    datos = request.data.copy()  # Copia de datos del request
-    archivo = request.FILES.get('archivo_adjunto', None)  # Obtener archivo si existe
+    datos = request.data.copy()
+    archivo = request.FILES.get('archivo_adjunto', None)
 
-    # Agregar archivo a los datos si está presente
     if archivo:
         datos['archivo_adjunto'] = archivo
 
@@ -220,12 +219,13 @@ def crear_orden_api(request):
         except serializers.ValidationError as error:
             return Response(error.detail, status=status.HTTP_400_BAD_REQUEST)
         except Exception as error:
-            print(repr(error))
+            print(f"⚠️ Error inesperado en API-REST: {repr(error)}")
             return Response(repr(error), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     else:
-        print("❌ Errores de validación:", ordenCreateSerializer.errors)
+        print(f"❌ Errores de validación en API-REST: {ordenCreateSerializer.errors}")
         return Response(ordenCreateSerializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 @api_view(['POST'])

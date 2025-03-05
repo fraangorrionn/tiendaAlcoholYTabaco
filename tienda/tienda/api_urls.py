@@ -1,6 +1,7 @@
 from django.urls import path, include
 from tienda.api_view import *
 from rest_framework.routers import DefaultRouter
+from django.contrib.auth import views as auth_views
 
 router = DefaultRouter()
 router.register(r'productos', ProductoViewSet, basename='productos')
